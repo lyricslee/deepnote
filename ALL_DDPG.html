@@ -1,0 +1,385 @@
+<!DOCTYPE html><html>
+
+<head>
+<meta charset="utf-8">
+<title>ALL_DDPG</title>
+<style>
+html,body{ font-family: "SF UI Display", ".PingFang SC","PingFang SC", "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Microsoft YaHei", "Microsoft JhengHei", "Helvetica Neue", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
+  font-size: 16px;
+  color:#222
+  -webkit-text-size-adjust:none;  min-width: 200px;
+  max-width: 760px;
+  margin: 0 auto; padding: 1rem;
+  line-height: 1.5rem;
+
+}
+h1,h2,h3,h4,h5,h6{font-family: "PT Sans","SF UI Display", ".PingFang SC","PingFang SC", "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Microsoft YaHei", "Microsoft JhengHei", "Helvetica Neue", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
+text-rendering:optimizelegibility;margin-bottom:1em;font-weight:bold; line-height: 1.8rem;
+
+}
+h1,h2{position:relative;padding-top:1rem;padding-bottom:0.2rem;margin-bottom:1rem;
+border-bottom: solid 1px #eee;  
+}
+h2{padding-top:0.8rem;padding-bottom:0.2rem;}
+h1{ font-size: 1.6rem;}
+h2{ font-size: 1.4rem;}
+h3{ font-size: 1.2rem;}
+h4{ font-size: 1.1rem;}
+h5{ font-size: 1.0rem;}
+h6{ font-size: 0.9rem;}
+
+table{border-collapse:collapse;border-spacing:0;
+  margin-top: 0.8rem;
+  margin-bottom: 1.4rem;
+}
+tr{  background-color: #fff;
+  border-top: 1px solid #ccc;}
+th,td{padding: 5px 14px;
+  border: 1px solid #ddd;}
+
+blockquote{font-style:italic;font-size:1.1em;line-height:1.5em;padding-left:1em; border-left:4px solid #D5D5D5;    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 1.5rem; }
+
+a{color:#1863a1}
+a:hover{color: #1b438d;}
+pre,code,p code,li code{font-family:Menlo,Monaco,"Andale Mono","lucida console","Courier New",monospace}
+
+pre{-webkit-border-radius:0.4em;-moz-border-radius:0.4em;-ms-border-radius:0.4em;-o-border-radius:0.4em;border-radius:0.4em;border:1px solid #e7dec3;line-height:1.45em;font-size:0.9rem;margin-bottom:2.1em;padding:.8em 1em;color:#586e75;overflow:auto; background-color:#fdf6e3;}
+
+:not(pre) > code{display:inline-block;text-indent:0em;white-space:no-wrap;background:#fff;font-size:0.9rem;line-height:1.5em;color:#555;border:1px solid #ddd;-webkit-border-radius:0.4em;-moz-border-radius:0.4em;-ms-border-radius:0.4em;-o-border-radius:0.4em;border-radius:0.4em;padding:0 .3em;margin:-1px 4px;}
+pre code{font-size:1em !important;background:none;border:none}
+
+img{max-width:100%;padding: 8px 0px;}
+
+
+hr {
+  height: 0;
+  margin: 15px 0;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+figcaption{text-align:center;}
+/* PrismJS 1.14.0
+https://prismjs.com/download.html#themes=prism-solarizedlight&languages=markup+css+clike+javascript */
+/*
+ Solarized Color Schemes originally by Ethan Schoonover
+ http://ethanschoonover.com/solarized
+
+ Ported for PrismJS by Hector Matos
+ Website: https://krakendev.io
+ Twitter Handle: https://twitter.com/allonsykraken)
+*/
+
+/*
+SOLARIZED HEX
+--------- -------
+base03    #002b36
+base02    #073642
+base01    #586e75
+base00    #657b83
+base0     #839496
+base1     #93a1a1
+base2     #eee8d5
+base3     #fdf6e3
+yellow    #b58900
+orange    #cb4b16
+red       #dc322f
+magenta   #d33682
+violet    #6c71c4
+blue      #268bd2
+cyan      #2aa198
+green     #859900
+*/
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #657b83; /* base00 */
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+  background: #073642; /* base02 */
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+  background: #073642; /* base02 */
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: 1em;
+  margin: .5em 0;
+  overflow: auto;
+  border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background-color: #fdf6e3; /* base3 */
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #93a1a1; /* base1 */
+}
+
+.token.punctuation {
+  color: #586e75; /* base01 */
+}
+
+.namespace {
+  opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #268bd2; /* blue */
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.url,
+.token.inserted {
+  color: #2aa198; /* cyan */
+}
+
+.token.entity {
+  color: #657b83; /* base00 */
+  background: #eee8d5; /* base2 */
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #859900; /* green */
+}
+
+.token.function,
+.token.class-name {
+  color: #b58900; /* yellow */
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #cb4b16; /* orange */
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+
+
+</style>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({TeX: { equationNumbers: { autoNumber: "AMS" } }});</script>
+<style> @media print{ code[class*="language-"],pre[class*="language-"]{overflow: visible; word-wrap: break-word !important;} }</style></head><body><div class="markdown-body">
+<h3 id="toc_0">1.1 DDPG</h3>
+
+<p><a href="https://spinningup.openai.com/en/latest/algorithms/ddpg.html">https://spinningup.openai.com/en/latest/algorithms/ddpg.html</a></p>
+
+<h4 id="toc_1">Background</h4>
+
+<p>Deep Deterministic Policy Gradient (DDPG) is an algorithm which concurrently learns a Q-function and a policy. It uses off-policy data and the Bellman equation to learn the Q-function, and uses the Q-function to learn the policy.</p>
+
+<p>his approach is closely connected to Q-learning, and is motivated the same way: if you know the optimal action-value function \(Q^*(s,a), then in any given state, the optimal action a^*(s)\) can be found by solving<br/>
+\[a^*(s) = \arg \max_a Q^*(s,a).\]</p>
+
+<p>DDPG interleaves learning an approximator to \(Q^*(s,a) with learning an approximator to a^*(s)\), and it does so in a way which is specifically adapted for environments with continuous action spaces. But what does it mean that DDPG is adapted specifically for environments with continuous action spaces? It relates to how we compute the max over actions in \(\max_a Q^*(s,a).\)</p>
+
+<p>When there are a finite number of discrete actions, the max poses no problem, because we can just compute the Q-values for each action separately and directly compare them. (This also immediately gives us the action which maximizes the Q-value.) But when the action space is continuous, we can’t exhaustively evaluate the space, and solving the optimization problem is highly non-trivial. Using a normal optimization algorithm would make calculating \(\max_a Q^*(s,a)\) a painfully expensive subroutine. And since it would need to be run every time the agent wants to take an action in the environment, this is unacceptable.</p>
+
+<p>Because the action space is continuous, the function Q<sup>*(s,a)</sup> is presumed to be differentiable with respect to the action argument. This allows us to set up an efficient, gradient-based learning rule for a policy \mu(s) which exploits that fact. Then, instead of running an expensive optimization subroutine each time we wish to compute \max_a Q(s,a), we can approximate it with \(\max_a Q(s,a) \approx Q(s,\mu(s))\). See the Key Equations section details.</p>
+
+<h4 id="toc_2">Quick Facts</h4>
+
+<ul>
+<li>DDPG is an off-policy algorithm.</li>
+<li>DDPG can only be used for environments with continuous action spaces.</li>
+<li>DDPG can be thought of as being deep Q-learning for continuous action spaces.</li>
+<li>The Spinning Up implementation of DDPG does not support parallelization.</li>
+</ul>
+
+<h4 id="toc_3">Key Equations</h4>
+
+<p>Here, we’ll explain the math behind the two parts of DDPG: learning a Q function, and learning a policy.</p>
+
+<ul>
+<li>The Q-Learning Side of DDPG<br/>
+First, let’s recap the Bellman equation describing the optimal action-value function, \(Q^*(s,a)\). It’s given by</li>
+</ul>
+
+<p>\[Q^*(s,a) = \underset{s&#39; \sim P}{{\mathrm E}}\left[r(s,a) + \gamma \max_{a&#39;} Q^*(s&#39;, a&#39;)\right]\]</p>
+
+<p>where \(s&#39; \sim P\) is shorthand for saying that the next state, \(s&#39;\), is sampled by the environment from a distribution \(P(\cdot| s,a).\)</p>
+
+<p>This Bellman equation is the starting point for learning an approximator to \(Q^*(s,a).\) Suppose the approximator is a neural network \(Q_{\phi}(s,a),\) with parameters \(\phi,\) and that we have collected a set \({\mathcal D}\) of transitions (s,a,r,s&#39;,d) (where d indicates whether state s&#39; is terminal). We can set up a mean-squared Bellman error (MSBE) function, which tells us roughly how closely \(Q_{\phi} \)comes to satisfying the Bellman equation:</p>
+
+<p>\[<br/>
+L(\phi, {\mathcal D}) = \underset{(s,a,r,s&#39;,d) \sim {\mathcal D}}{{\mathrm E}}\left[<br/>
+    \Bigg( Q_{\phi}(s,a) - \left(r + \gamma (1 - d) \max_{a&#39;} Q_{\phi}(s&#39;,a&#39;) \right) \Bigg)^2<br/>
+    \right]<br/>
+\]</p>
+
+<p>Q-learning algorithms for function approximators, such as DQN (and all its variants) and DDPG, are largely based on minimizing this MSBE loss function. </p>
+
+<h3 id="toc_4">There are two main tricks employed by all of them which are worth describing, and then a specific detail for DDPG.</h3>
+
+<h5 id="toc_5">1. Trick One: Replay Buffers.</h5>
+
+<p>All standard algorithms for training a deep neural network to approximate \(Q^*(s,a)\) make use of an experience replay buffer. This is the set \({\mathcal D}\) of previous experiences. In order for the algorithm to have stable behavior, the replay buffer should be large enough to contain a wide range of experiences, but it may not always be good to keep everything. If you only use the very-most recent data, you will overfit to that and things will break; if you use too much experience, you may slow down your learning. This may take some tuning to get right.</p>
+
+<p>We’ve mentioned that DDPG is an off-policy algorithm: this is as good a point as any to highlight why and how. Observe that the replay buffer should contain old experiences, even though they might have been obtained using an outdated policy. Why are we able to use these at all? The reason is that the Bellman equation doesn’t care which transition tuples are used, or how the actions were selected, or what happens after a given transition, because the optimal Q-function should satisfy the Bellman equation for all possible transitions. So any transitions that we’ve ever experienced are fair game when trying to fit a Q-function approximator via MSBE minimization.</p>
+
+<h5 id="toc_6">2.Trick Two: Target Networks.</h5>
+
+<p>Q-learning algorithms make use of target networks. The term</p>
+
+<p>\[r + \gamma (1 - d) \max_{a&#39;} Q_{\phi}(s&#39;,a&#39;)\]</p>
+
+<p>is called the target, because when we minimize the MSBE loss, we are trying to make the Q-function be more like this target. Problematically, the target depends on the same parameters we are trying to train: \(\phi.\) <strong>This makes MSBE minimization unstable.</strong></p>
+
+<p>The solution is to use a set of parameters which comes close to \(\phi\), but with a time delay—that is to say, a second network, called the target network, which lags the first. The parameters of the target network are denoted \(\phi_{\text{targ}}\).</p>
+
+<p>In DQN-based algorithms, the target network is just copied over from the main network every some-fixed-number of steps. In DDPG-style algorithms, the target network is updated once per main network update by polyak averaging:</p>
+
+<p>\[\phi_{\text{targ}} \leftarrow \rho \phi_{\text{targ}} + (1 - \rho) \phi,\]</p>
+
+<p>where\( \rho\) is a hyperparameter between 0 and 1 (usually close to 1). (This hyperparameter is called polyak in our code).</p>
+
+<h5 id="toc_7">DDPG Detail: Calculating the Max Over Actions in the Target.</h5>
+
+<p>As mentioned earlier: computing the maximum over actions in the target is a challenge in continuous action spaces. DDPG deals with this by using a target policy network to compute an action which approximately maximizes \(Q_{\phi_{\text{targ}}}\). </p>
+
+<p>Putting it all together, Q-learning in DDPG is performed by minimizing the following MSBE loss with stochastic gradient descent:</p>
+
+<p>\[L(\phi, {\mathcal D}) = \underset{(s,a,r,s&#39;,d) \sim {\mathcal D}}{{\mathrm E}}\left[<br/>
+    \Bigg( Q_{\phi}(s,a) - \left(r + \gamma (1 - d) Q_{\phi_{\text{targ}}}(s&#39;, \mu_{\theta_{\text{targ}}}(s&#39;)) \right) \Bigg)^2<br/>
+    \right],\]</p>
+
+<p>where \(\mu_{\theta_{\text{targ}}}\) is the target policy.</p>
+
+<h5 id="toc_8">The Policy Learning Side of DDPG</h5>
+
+<p>Policy learning in DDPG is fairly simple. We want to learn a deterministic policy \(\mu_{\theta}(s)\) which gives the action that maximizes \(Q_{\phi}(s,a).\) Because the action space is continuous, and we assume the Q-function is differentiable with respect to action, we can just perform gradient ascent (with respect to policy parameters only) to solve</p>
+
+<p>\[\max_{\theta} \underset{s \sim {\mathcal D}}{{\mathrm E}}\left[ Q_{\phi}(s, \mu_{\theta}(s)) \right].\]</p>
+
+<p>Note that the Q-function parameters are treated as constants here.</p>
+
+<h5 id="toc_9">Exploration vs. Exploitation</h5>
+
+<p>DDPG trains a deterministic policy in an off-policy way. Because the policy is deterministic, if the agent were to explore on-policy, in the beginning it would probably not try a wide enough variety of actions to find useful learning signals. To make DDPG policies explore better, we add noise to their actions at training time. The authors of the original DDPG paper recommended time-correlated OU noise, but more recent results suggest that uncorrelated, mean-zero Gaussian noise works perfectly well. Since the latter is simpler, it is preferred. To facilitate getting higher-quality training data, you may reduce the scale of the noise over the course of training. (We do not do this in our implementation, and keep noise scale fixed throughout.)</p>
+
+<p>At test time, to see how well the policy exploits what it has learned, we do not add noise to the actions.</p>
+
+<h6 id="toc_10">DDPG implementation trick</h6>
+
+<p>Our DDPG implementation uses a trick to improve exploration at the start of training. For a fixed number of steps at the beginning (set with the start_steps keyword argument), the agent takes actions which are sampled from a uniform random distribution over valid actions. After that, it returns to normal DDPG exploration.</p>
+
+<h3 id="toc_11">1.2 TD3</h3>
+
+<h3 id="toc_12">1.3 Soft Actor-Critic</h3>
+
+<p>Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor</p>
+
+<p>Model-free deep reinforcement learning (RL) algorithms have been demonstrated on a range of challenging decision making and control tasks. However, these methods typically suffer from two major challenges: very high sample complexity and brittle convergence properties, which necessitate meticulous hyperparameter tuning. Both of these challenges severely limit the applicability of such methods to complex, real-world domains. In this paper, we propose soft actor-critic, an off-policy actor-critic deep RL algorithm based on the maximum entropy reinforcement learning framework. In this framework, the actor aims to maximize expected reward while also maximizing entropy. That is, to succeed at the task while acting as randomly as possible. Prior deep RL methods based on this framework have been formulated as Q-learning methods. By combining off-policy updates with a stable stochastic actor-critic formulation, our method achieves state-of-the-art performance on a range of continuous control benchmark tasks, outperforming prior on-policy and off-policy methods. Furthermore, we demonstrate that, in contrast to other off-policy algorithms, our approach is very stable, achieving very similar performance across different random seeds.</p>
+
+<p><a href="https://spinningup.openai.com/en/latest/algorithms/sac.html">https://spinningup.openai.com/en/latest/algorithms/sac.html</a></p>
+
+<h3 id="toc_13">Background</h3>
+
+<p>Soft Actor Critic (SAC) is an algorithm which optimizes a stochastic policy in an off-policy way, forming a bridge between stochastic policy optimization and DDPG-style approaches. It isn’t a direct successor to TD3 (having been published roughly concurrently), but it incorporates the clipped double-Q trick, and due to the inherent stochasticity of the policy in SAC, it also winds up benefiting from something like target policy smoothing.</p>
+
+<p>A central feature of SAC is entropy regularization. The policy is trained to maximize a trade-off between expected return and entropy, a measure of randomness in the policy. This has a close connection to the exploration-exploitation trade-off: increasing entropy results in more exploration, which can accelerate learning later on. It can also prevent the policy from prematurely converging to a bad local optimum.</p>
+
+</div></body>
+
+</html>

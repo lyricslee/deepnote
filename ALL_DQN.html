@@ -2,296 +2,108 @@
 
 <head>
 <meta charset="utf-8">
-<title>AA_DQN</title>
+<title>ALL_DQN</title>
 <style>
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-nav,
-section,
-summary {
-  display: block;
+html,body{ font-family: "SF UI Display", ".PingFang SC","PingFang SC", "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Microsoft YaHei", "Microsoft JhengHei", "Helvetica Neue", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
+  font-size: 16px;
+  color:#222
+  -webkit-text-size-adjust:none;  min-width: 200px;
+  max-width: 760px;
+  margin: 0 auto; padding: 1rem;
+  line-height: 1.5rem;
+
 }
-audio,
-canvas,
-video {
-  display: inline-block;
+h1,h2,h3,h4,h5,h6{font-family: "PT Sans","SF UI Display", ".PingFang SC","PingFang SC", "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Microsoft YaHei", "Microsoft JhengHei", "Helvetica Neue", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
+text-rendering:optimizelegibility;margin-bottom:1em;font-weight:bold; line-height: 1.8rem;
+
 }
-audio:not([controls]) {
-  display: none;
+h1,h2{position:relative;padding-top:1rem;padding-bottom:0.2rem;margin-bottom:1rem;
+border-bottom: solid 1px #eee;  
+}
+h2{padding-top:0.8rem;padding-bottom:0.2rem;}
+h1{ font-size: 1.6rem;}
+h2{ font-size: 1.4rem;}
+h3{ font-size: 1.2rem;}
+h4{ font-size: 1.1rem;}
+h5{ font-size: 1.0rem;}
+h6{ font-size: 0.9rem;}
+
+table{border-collapse:collapse;border-spacing:0;
+  margin-top: 0.8rem;
+  margin-bottom: 1.4rem;
+}
+tr{  background-color: #fff;
+  border-top: 1px solid #ccc;}
+th,td{padding: 5px 14px;
+  border: 1px solid #ddd;}
+
+blockquote{font-style:italic;font-size:1.1em;line-height:1.5em;padding-left:1em; border-left:4px solid #D5D5D5;    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 1.5rem; }
+
+a{color:#1863a1}
+a:hover{color: #1b438d;}
+pre,code,p code,li code{font-family:Menlo,Monaco,"Andale Mono","lucida console","Courier New",monospace}
+
+pre{-webkit-border-radius:0.4em;-moz-border-radius:0.4em;-ms-border-radius:0.4em;-o-border-radius:0.4em;border-radius:0.4em;border:1px solid #e7dec3;line-height:1.45em;font-size:0.9rem;margin-bottom:2.1em;padding:.8em 1em;color:#586e75;overflow:auto; background-color:#fdf6e3;}
+
+:not(pre) > code{display:inline-block;text-indent:0em;white-space:no-wrap;background:#fff;font-size:0.9rem;line-height:1.5em;color:#555;border:1px solid #ddd;-webkit-border-radius:0.4em;-moz-border-radius:0.4em;-ms-border-radius:0.4em;-o-border-radius:0.4em;border-radius:0.4em;padding:0 .3em;margin:-1px 4px;}
+pre code{font-size:1em !important;background:none;border:none}
+
+img{max-width:100%;padding: 8px 0px;}
+
+
+hr {
   height: 0;
-}
-[hidden] {
-  display: none;
-}
-html {
-  font-family: sans-serif;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-}
-body {
-  margin: 0;
-}
-a:focus {
-  outline: thin dotted;
-}
-a:active,
-a:hover {
-  outline: 0;
-}
-h1 {
-  font-size: 2em;
-}
-abbr[title] {
-  border-bottom: 1px dotted;
-}
-b,
-strong {
-  font-weight: bold;
-}
-dfn {
-  font-style: italic;
-}
-mark {
-  background: #ff0;
-  color: #000;
-}
-code,
-kbd,
-pre,
-samp {
-  font-family: monospace, serif;
-  font-size: 1em;
-}
-pre {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-q {
-  quotes: "\201C" "\201D" "\2018" "\2019";
-}
-small {
-  font-size: 80%;
-}
-sub,
-sup {
-  font-size: 75%;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
-}
-sup {
-  top: -0.5em;
-}
-sub {
-  bottom: -0.25em;
-}
-img {
-  border: 0;
-  max-width: 100%;
-  padding: 0.8em 0em;
-}
-svg:not(:root) {
+  margin: 15px 0;
   overflow: hidden;
-}
-figure {
-  margin: 0;
-}
-fieldset {
-  border: 1px solid #c0c0c0;
-  margin: 0 2px;
-  padding: 0.35em 0.625em 0.75em;
-}
-legend {
+  background: transparent;
   border: 0;
-  padding: 0;
-}
-button,
-input,
-select,
-textarea {
-  font-family: inherit;
-  font-size: 100%;
-  margin: 0;
-}
-button,
-input {
-  line-height: normal;
-}
-button,
-html input[type="button"],
-input[type="reset"],
-input[type="submit"] {
-  -webkit-appearance: button;
-  cursor: pointer;
-}
-button[disabled],
-input[disabled] {
-  cursor: default;
-}
-input[type="checkbox"],
-input[type="radio"] {
-  box-sizing: border-box;
-  padding: 0;
-}
-input[type="search"] {
-  -webkit-appearance: textfield;
-  -moz-box-sizing: content-box;
-  -webkit-box-sizing: content-box;
-  box-sizing: content-box;
-}
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-decoration {
-  -webkit-appearance: none;
-}
-button::-moz-focus-inner,
-input::-moz-focus-inner {
-  border: 0;
-  padding: 0;
-}
-textarea {
-  overflow: auto;
-  vertical-align: top;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-html {
-  font-family: 'PT Sans', sans-serif;
-}
-pre,
-code {
-  font-family: 'Inconsolata', sans-serif;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'PT Sans Narrow', sans-serif;
-  font-weight: 700;
-}
-html {
-  background-color: #002b36;
-  color: #839496;
-  margin: 1em;
-}
-body {
-  background-color: #002b36;color: #839496;
-  margin: 0 auto;
-  max-width: 23cm;
-  padding: 1em;
-}
-
-code {
-  background-color: #073642;
-  padding: 2px;
-}
-a {
-  color: #b58900;
-}
-a:visited {
-  color: #cb4b16;
-}
-a:hover {
-  color: #cb4b16;
-}
-h1 {
-  color: #d33682;line-height: 1.1em;
-}
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: #859900;line-height: 1.1em;
-}
-pre {
-  background-color: #002b36;
-  color: #839496;
-  border: 1pt solid #586e75;
-  padding: 1em;
-  box-shadow: 5pt 5pt 8pt #073642;
-}
-pre code {
-  background-color: #002b36;
-}
-h1 {
-  font-size: 1.8em;
-}
-h2 {
-  font-size: 1.6em;
-}
-h3 {
-  font-size: 1.4em;
-}
-h4 {
-  font-size: 1.2em;
-}
-h5 {
-  font-size: 1.15em;
-}
-h6 {
-  font-size: 1.15em;
-}
-
-table {
-
-  overflow: auto;
-  box-shadow: 5pt 5pt 8pt #073642;
-}
-
-table th {
-  font-weight: bold;
-  background:#0A3641;
-}
-
-table th,
-table td {
-  padding: 6px 13px;
-  border: 1px solid #30515A;
-}
-
-table tr {
-  border-top: 1px solid #30515A;
-}
-
-table tr:nth-child(2n) {
-}
-
-
-
-@media (max-width: 540px) {
-  html{margin: 0 auto; padding: 4px;}
+  border-bottom: 1px solid #ddd;
 }
 figcaption{text-align:center;}
-
 /* PrismJS 1.14.0
-https://prismjs.com/download.html#themes=prism-okaidia&languages=markup+css+clike+javascript */
-/**
- * okaidia theme for JavaScript, CSS and HTML
- * Loosely based on Monokai textmate theme by http://www.monokai.nl/
- * @author ocodia
- */
+https://prismjs.com/download.html#themes=prism-solarizedlight&languages=markup+css+clike+javascript */
+/*
+ Solarized Color Schemes originally by Ethan Schoonover
+ http://ethanschoonover.com/solarized
+
+ Ported for PrismJS by Hector Matos
+ Website: https://krakendev.io
+ Twitter Handle: https://twitter.com/allonsykraken)
+*/
+
+/*
+SOLARIZED HEX
+--------- -------
+base03    #002b36
+base02    #073642
+base01    #586e75
+base00    #657b83
+base0     #839496
+base1     #93a1a1
+base2     #eee8d5
+base3     #fdf6e3
+yellow    #b58900
+orange    #cb4b16
+red       #dc322f
+magenta   #d33682
+violet    #6c71c4
+blue      #268bd2
+cyan      #2aa198
+green     #859900
+*/
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #f8f8f2;
-  background: none;
-  text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+  color: #657b83; /* base00 */
   font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
   text-align: left;
   white-space: pre;
   word-spacing: normal;
   word-break: normal;
   word-wrap: normal;
+
   line-height: 1.5;
 
   -moz-tab-size: 4;
@@ -304,33 +116,44 @@ pre[class*="language-"] {
   hyphens: none;
 }
 
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+  background: #073642; /* base02 */
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+  background: #073642; /* base02 */
+}
+
 /* Code blocks */
 pre[class*="language-"] {
   padding: 1em;
   margin: .5em 0;
   overflow: auto;
+  border-radius: 0.3em;
 }
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-  background: #272822;
+  background-color: #fdf6e3; /* base3 */
 }
 
 /* Inline code */
 :not(pre) > code[class*="language-"] {
   padding: .1em;
-  white-space: normal;
+  border-radius: .3em;
 }
 
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: slategray;
+  color: #93a1a1; /* base1 */
 }
 
 .token.punctuation {
-  color: #f8f8f2;
+  color: #586e75; /* base01 */
 }
 
 .namespace {
@@ -339,15 +162,12 @@ pre[class*="language-"] {
 
 .token.property,
 .token.tag,
+.token.boolean,
+.token.number,
 .token.constant,
 .token.symbol,
 .token.deleted {
-  color: #f92672;
-}
-
-.token.boolean,
-.token.number {
-  color: #ae81ff;
+  color: #268bd2; /* blue */
 }
 
 .token.selector,
@@ -355,33 +175,31 @@ pre[class*="language-"] {
 .token.string,
 .token.char,
 .token.builtin,
+.token.url,
 .token.inserted {
-  color: #a6e22e;
+  color: #2aa198; /* cyan */
 }
 
-.token.operator,
-.token.entity,
-.token.url,
-.language-css .token.string,
-.style .token.string,
-.token.variable {
-  color: #f8f8f2;
+.token.entity {
+  color: #657b83; /* base00 */
+  background: #eee8d5; /* base2 */
 }
 
 .token.atrule,
 .token.attr-value,
-.token.function,
-.token.class-name {
-  color: #e6db74;
+.token.keyword {
+  color: #859900; /* green */
 }
 
-.token.keyword {
-  color: #66d9ef;
+.token.function,
+.token.class-name {
+  color: #b58900; /* yellow */
 }
 
 .token.regex,
-.token.important {
-  color: #fd971f;
+.token.important,
+.token.variable {
+  color: #cb4b16; /* orange */
 }
 
 .token.important,
@@ -437,6 +255,7 @@ pre[class*="language-"].line-numbers > code {
             padding-right: 0.8em;
             text-align: right;
         }
+
 
 
 </style>
