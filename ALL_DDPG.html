@@ -637,7 +637,18 @@ with tf.variable_scope(&#39;target&#39;, reuse=True):<br/>
 
 <p>Model-free deep reinforcement learning (RL) algorithms have been demonstrated on a range of challenging decision making and control tasks. However, these methods typically suffer from two major challenges: very high sample complexity and brittle convergence properties, which necessitate meticulous hyperparameter tuning. Both of these challenges severely limit the applicability of such methods to complex, real-world domains. In this paper, we propose soft actor-critic, an off-policy actor-critic deep RL algorithm based on the maximum entropy reinforcement learning framework. In this framework, the actor aims to maximize expected reward while also maximizing entropy. That is, to succeed at the task while acting as randomly as possible. Prior deep RL methods based on this framework have been formulated as Q-learning methods. By combining off-policy updates with a stable stochastic actor-critic formulation, our method achieves state-of-the-art performance on a range of continuous control benchmark tasks, outperforming prior on-policy and off-policy methods. Furthermore, we demonstrate that, in contrast to other off-policy algorithms, our approach is very stable, achieving very similar performance across different random seeds.</p>
 
-<p><a href="https://spinningup.openai.com/en/latest/algorithms/sac.html">https://spinningup.openai.com/en/latest/algorithms/sac.html</a></p>
+<ul>
+<li><a href="https://spinningup.openai.com/en/latest/algorithms/sac.html">https://spinningup.openai.com/en/latest/algorithms/sac.html</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/33534968">https://zhuanlan.zhihu.com/p/33534968</a></li>
+</ul>
+
+<p>熵给策略一定压力，使得它不会退化成一个确定性策略。这种方法通常被称为熵正则化 (entropy regularized) 策略梯度法，通常用于防止策略过早地熵崩塌 (premature entropy collapse)。这在行动空间是连续的时候尤为重要，如我们之前在策略梯度法的第二个问题中提到，高斯策略下，策略梯度法通常希望减少策略的方差，因为减少方差通常可以导致局部的收益增大，但这同时也会使得策略梯度卡住，改进停止，加入熵也是一个方法。</p>
+
+<p>总体来说，软化方法的好处主要是有以下几点。首先毫无疑问地，它增加了探索（类似Boltzmann探索）且防止了熵的坍塌。软化方法对状态的覆盖面更广、鲁棒性增强，也更容易对特定的任务进行调参（预训练）。对于并列最优的情况，软化max得到的是一个分布，几个选项将等概率选择，通过调整温度参数和收益尺度可以使得软化max变成硬max。在之后我们也将体现这个模型更适合对人类行为建模。</p>
+
+<p>Haarnoja et al. (2017) 的&quot;Reinforcement Learning with Deep Energy-Based Policies&quot; 使用软化的Q学习方法来进行成功的实践。用策略梯度法来学习MuJoCo小人跑步的任务，超参数稍微进行调整，可能虽然得分都很高但是跑步形态完全不同，这是因为增强学习算法一旦发现一块比较好的区域，就会去加强这块区域的利用率，很容易达到局部最优。如上图中，机器人想到达这个蓝块，代价函数为到这个蓝块的距离。机器人可以选择黄色或绿色路线，初始看起来可能效果差不多，但是黄色路线实际上是走不通的：软化的方法可以让两条线路有更均衡的被选择概率，防止某一块被过度增强，不错失可能性。这个方法被称为随机的基于能量的策略 (stochastic energy-based policy)。要保证所有假设都被验证，就是用之前介绍过的软化Q学习算法，问题是如何实现从分布中采样。为了实现这个目标，它们训练一个随机网络来根据状态和某高斯随机噪音来得到行动（类似模仿学习中提到过的隐性密度模型），使用均摊的SVGD (Stein Variational Gradient Descent) (Wang and Liu, 2017) 来训练以符合\pi(\mathbf{a}|\mathbf{s})\propto\exp(Q(\mathbf{s},\mathbf{a}))，和GAN的想法非常接近。</p>
+
+<p>四足动物在一个槽里移动的训练，在预训练时，软化的Q学习相比DDPG（加上\epsilon-贪心）来说探索覆盖面更广（一开始就显示出了非常强的探索性）。事实上，有预训练比没有预训练效果好很多，而且软化Q学习的预训练效果比DDPG预训练要好。</p>
 
 <h4 id="toc_18">Background</h4>
 
@@ -689,8 +700,7 @@ To explain Soft Actor Critic, we first have to introduce the entropy-regularized
 
 <p>and the Bellman equation for \(Q^{\pi}\) is</p>
 
-<p>\[Q^{\pi}(s,a) &amp;= \underE{s&#39; \sim P \\ a&#39; \sim \pi}{R(s,a,s&#39;) + \gamma\left(Q^{\pi}(s&#39;,a&#39;) + \alpha H\left(\pi(\cdot|s&#39;)\right) \right)} \\<br/>
-&amp;= \underE{s&#39; \sim P}{R(s,a,s&#39;) + \gamma V^{\pi}(s&#39;)}.\]</p>
+<p><img src="https://i.imgur.com/AIQKIzV.jpg" alt="" style="width:654px;"/></p>
 
 <p>The way we’ve set up the value functions in the entropy-regularized setting is a little bit arbitrary, and actually we could have done it differently (eg make \(Q^{\pi}\) include the entropy bonus at the first timestep). The choice of definition may vary slightly across papers on the subject.</p>
 
@@ -710,23 +720,96 @@ To explain Soft Actor Critic, we first have to introduce the entropy-regularized
 <p>target value 网络得的学习和 TD3 DDPG 一致的，使用了 polyak 值。</p>
 
 <ul>
-<li><p>Learning V. The value function is learned by exploiting (a sample-based approximation of) the connection between Q<sup>{\pi}</sup> and V<sup>{\pi}.</sup> Before we go into the learning rule, let’s first rewrite the connection equation by using the definition of entropy to obtain:</p>
-<p>\[V^{\pi}(s) &amp;= \underE{a \sim \pi}{Q^{\pi}(s,a)} + \alpha H\left(\pi(\cdot|s)\right) \\<br/>
-&amp;= \underE{a \sim \pi}{Q^{\pi}(s,a) - \alpha \log \pi(a|s)}.\]</p>
-<p>The RHS is an expectation over actions, so we can approximate it by sampling from the policy:</p>
+<li><p>Learning V. The value function is learned by exploiting (a sample-based approximation of) the connection between Q<sup>{\pi}</sup> and V<sup>{\pi}.</sup> Before we go into the learning rule, let’s first rewrite the connection equation by using the definition of entropy to obtain:<br/>
+<center><br/>
+<img src="https://i.imgur.com/Q1UNU1w.jpg" alt="" style="width:395px;"/><br/>
+</center><br/>
+The RHS is an expectation over actions, so we can approximate it by sampling from the policy:</p>
 <p>\[V^{\pi}(s) \approx Q^{\pi}(s,\tilde{a}) - \alpha \log \pi(\tilde{a}|s), \;\;\;\;\; \tilde{a} \sim \pi(\cdot|s).\]</p>
 <p>SAC sets up a mean-squared-error loss for \(V_{\psi}\) based on this approximation. But what Q-value do we use? SAC uses clipped double-Q like TD3 for learning the value function, and takes the minimum Q-value between the two approximators. So the SAC loss for value function parameters is:</p>
 <p>V 值得学习上和 SAC 一样使用了两个 Q 值中最小的值来计算 Mean-Squared_Error(MSE)</p>
 <p>\[L(\psi, {\mathcal D}) = \underE{s \sim \mathcal{D} \\ \tilde{a} \sim \pi_{\theta}}{\Bigg(V_{\psi}(s) - \left(\min_{i=1,2} Q_{\phi_i}(s,\tilde{a}) - \alpha \log \pi_{\theta}(\tilde{a}|s) \right)\Bigg)^2}.\]</p>
 <p>Importantly, we do not use actions from the replay buffer here: these actions are sampled fresh from the current version of the policy. 最大的差别在于这里不适用缓冲区中的 action 而是当前策略生成的。</p></li>
 <li><p>Learning the Policy. The policy should, in each state, act to maximize the expected future return plus expected future entropy. That is, it should maximize \(V^{\pi}(s)\), which we expand out (as before) into</p>
-<p>\(\underE{a \sim \pi}{Q^{\pi}(s,a) - \alpha \log \pi(a|s)}.\)</p>
-<p>The way we optimize the policy makes use of the reparameterization trick, in which a sample from \(\pi_{\theta}(\cdot|s)\) is drawn by computing a deterministic function of state, policy parameters, and independent noise. To illustrate: following the authors of the SAC paper, we use a squashed Gaussian policy, which means that samples are obtained according to</p>
-<p>\[\tilde{a}_{\theta}(s, \xi) = \tanh\left( \mu_{\theta}(s) + \sigma_{\theta}(s) \odot \xi \right), \;\;\;\;\; \xi \sim \mathcal{N}(0, I).\]</p>
-<p>which is almost the same as the DDPG and TD3 policy optimization, except for the stochasticity and entropy term.</p></li>
+<p>\(\underE{a \sim \pi}{Q^{\pi}(s,a) - \alpha \log \pi(a|s)}.\)</p></li>
 </ul>
 
-<h4 id="toc_22">Exploration vs. Exploitation</h4>
+<h4 id="toc_22">squashed Gaussian policy 压缩的高斯策略</h4>
+
+<p>The way we optimize the policy makes use of the reparameterization trick, in which a sample from \(\pi_{\theta}(\cdot|s)\) is drawn by computing a deterministic function of state, policy parameters, and independent noise. To illustrate: following the authors of the SAC paper, we use a squashed Gaussian policy, which means that samples are obtained according to</p>
+
+<p>\[\tilde{a}_{\theta}(s, \xi) = \tanh\left( \mu_{\theta}(s) + \sigma_{\theta}(s) \odot \xi \right), \;\;\;\;\; \xi \sim \mathcal{N}(0, I).\]</p>
+
+<p>This policy has two key differences from the policies we use in the other policy optimization algorithms:</p>
+
+<ol>
+<li><p>The squashing function. The \(\tanh\) in the SAC policy ensures that actions are bounded to a finite range. This is absent in the VPG, TRPO, and PPO policies. It also changes the distribution: before the \(\tanh\) the SAC policy is a factored Gaussian like the other algorithms’ policies, but after the \(\tanh\) it is not. (You can still compute the log-probabilities of actions in closed form, though: see the paper appendix for details.) <br/>
+与之前在其他策略中使用的策略方法不同之处在于这里增加了一个 tanh 压缩 squash 的操作，使得 actions 是一个确定有界的。在此之前是因式分解的高斯策略。</p></li>
+<li><p>The way standard deviations are parameterized. In VPG, TRPO, and PPO, we represent the log std devs with state-independent parameter vectors. In SAC, we represent the log std devs as outputs from the neural network, meaning that they depend on state in a complex way. SAC with state-independent log std devs, in our experience, did not work. (Can you think of why? Or better yet: run an experiment to verify?)</p>
+<p>The reparameterization trick allows us to rewrite the expectation over actions (which contains a pain point: the distribution depends on the policy parameters) into an expectation over noise (which removes the pain point: the distribution now has no dependence on parameters):</p></li>
+</ol>
+
+<p>\[\underE{a \sim \pi_{\theta}}{Q^{\pi_{\theta}}(s,a) - \alpha \log \pi_{\theta}(a|s)} = \underE{\xi \sim \mathcal{N}}{Q^{\pi_{\theta}}(s,\tilde{a}_{\theta}(s,\xi)) - \alpha \log \pi_{\theta}(\tilde{a}_{\theta}(s,\xi)|s)}\]</p>
+
+<p>To get the policy loss, the final step is that we need to substitute \(Q^{\pi_{\theta}}\) with one of our function approximators. The same as in TD3, we use \(Q_{\phi_1}\). The policy is thus optimized according to</p>
+
+<p>\[\max_{\theta} \underE{s \sim \mathcal{D} \\ \xi \sim \mathcal{N}}{Q_{\phi_1}(s,\tilde{a}_{\theta}(s,\xi)) - \alpha \log \pi_{\theta}(\tilde{a}_{\theta}(s,\xi)|s)},\]</p>
+
+<p>which is almost the same as the DDPG and TD3 policy optimization, except for the stochasticity and entropy term.</p>
+
+<pre><code class="language-python">def mlp_gaussian_policy(x, a, hidden_sizes, activation, output_activation):
+    act_dim = a.shape.as_list()[-1]
+    net = mlp(x, list(hidden_sizes), activation, activation)
+    mu = tf.layers.dense(net, act_dim, activation=output_activation)
+
+    &quot;&quot;&quot;
+    Because algorithm maximizes trade-off of reward and entropy,
+    entropy must be unique to state---and therefore log_stds need
+    to be a neural network output instead of a shared-across-states
+    learnable parameter vector. But for deep Relu and other nets,
+    simply sticking an activationless dense layer at the end would
+    be quite bad---at the beginning of training, a randomly initialized
+    net could produce extremely large values for the log_stds, which
+    would result in some actions being either entirely deterministic
+    or too random to come back to earth. Either of these introduces
+    numerical instability which could break the algorithm. 
+    
+    To protect against that, we&#39;ll constrain the output range of the 
+    log_stds, to lie within [LOG_STD_MIN, LOG_STD_MAX]. This is 
+    slightly different from the trick used by the original authors of
+    SAC---they used tf.clip_by_value instead of squashing and rescaling.
+    I prefer this approach because it allows gradient propagation
+    through log_std where clipping wouldn&#39;t, but I don&#39;t know if
+    it makes much of a difference.
+    
+    因为算法最大化 reward 和 entropy 之间的 trade-off 所以 entropy 必须唯一对应 state，
+    所以 log_stds 需要是一个神经网络的输出，而不是共享状态的可以学习的参数 vector。为了数值稳定
+    我们限制了 log_std 的范围，与作者使用的 tf.clip_by_value 有点不同。
+    &quot;&quot;&quot;
+    log_std = tf.layers.dense(net, act_dim, activation=tf.tanh)
+    log_std = LOG_STD_MIN + 0.5 * (LOG_STD_MAX - LOG_STD_MIN) * (log_std + 1)
+
+    std = tf.exp(log_std)
+    pi = mu + tf.random_normal(tf.shape(mu)) * std
+    logp_pi = gaussian_likelihood(pi, mu, log_std)
+    return mu, pi, logp_pi
+
+</code></pre>
+
+<h4 id="toc_23">高斯似然函数</h4>
+
+<ul>
+<li><a href="https://mqshen.gitbooks.io/prml/Chapter2/gaussian/maximum_likelihood_gaussian.html">https://mqshen.gitbooks.io/prml/Chapter2/gaussian/maximum_likelihood_gaussian.html</a></li>
+</ul>
+
+<p>log_pi = gaussian_likelihood()</p>
+
+<pre><code class="language-python">def gaussian_likelihood(x, mu, log_std):
+    pre_sum = -0.5 * (((x-mu)/(tf.exp(log_std)+EPS))**2 + 2*log_std + np.log(2*np.pi))
+    return tf.reduce_sum(pre_sum, axis=1)
+</code></pre>
+
+<h4 id="toc_24">Exploration vs. Exploitation</h4>
 
 <p>SAC trains a stochastic policy with entropy regularization, and <strong>explores in an on-policy way</strong>. The entropy regularization coefficient \(\alpha\) explicitly controls the explore-exploit tradeoff, with higher \alpha corresponding to more exploration, and lower \(\alpha\) corresponding to more exploitation. The right coefficient (the one which leads to the stablest / highest-reward learning) may vary from environment to environment, and could require careful tuning.</p>
 
@@ -744,6 +827,18 @@ To explain Soft Actor Critic, we first have to introduce the entropy-regularized
 <ul>
 <li>improve exploration<br/>
 Our SAC implementation uses a trick to improve exploration at the start of training. For a fixed number of steps at the beginning (set with the start_steps keyword argument), the agent takes actions which are sampled from a uniform random distribution over valid actions. After that, it returns to normal SAC exploration.</li>
+</ul>
+
+<h4 id="toc_25">为什么 SAC 比 DDPG 和 TD3 多了一个 v_loss v 值的梯度计算</h4>
+
+<p>\[L(\psi, {\mathcal D}) = \underE{s \sim \mathcal{D} \\ \tilde{a} \sim \pi_{\theta}}{\Bigg(V_{\psi}(s) - \left(\min_{i=1,2} Q_{\phi_i}(s,\tilde{a}) - \alpha \log \pi_{\theta}(\tilde{a}|s) \right)\Bigg)^2}.\]</p>
+
+<p>Importantly, we do not use actions from the replay buffer here: these actions are sampled fresh from the current version of the policy. 这里的动作来自于当前策略而不是缓冲池</p>
+
+<ul>
+<li>V 值得计算<br/>
+\[V^{\pi}(s) \approx Q^{\pi}(s,\tilde{a}) - \alpha \log \pi(\tilde{a}|s), \;\;\;\;\; \tilde{a} \sim \pi(\cdot|s).<br/>
+SAC sets up a mean-squared-error loss for V_{\psi} based on this approximation.\]</li>
 </ul>
 
 </div></body>
