@@ -453,8 +453,7 @@ Prism.languages.yaml={scalar:{pattern:/([\-:]\s*(?:![^\s]+)?[ \t]*[|>])[ \t]*(?:
 
 <p>We often denote the parameters of such a policy by \(\theta\) or \(\phi\), and then write this as a subscript on the policy symbol to highlight the connection: 我们通常用 \(\theta\) or \(\phi\)  来表示策略</p>
 
-<p>\[a_t &amp;= \mu_{\theta}(s_t) \\<br/>
-a_t &amp;\sim \pi_{\theta}(\cdot | s_t).\]</p>
+<p>\[a_t = \mu(s_t), \\ a_t \sim \pi(\cdot | s_t).\]</p>
 
 <h4 id="toc_4">3.1 Deterministic Policies 确定性策略</h4>
 
@@ -605,6 +604,168 @@ with tf.variable_scope(&#39;pi&#39;):
     mu, pi, logp_pi = policy(x, a, hidden_sizes, activation, output_activation)
     mu, pi, logp_pi = apply_squashing_func(mu, pi, logp_pi)
 </code></pre>
+
+<h4 id="toc_9">4 Reward and Return</h4>
+
+<p>One kind of return is the finite-horizon undiscounted return, which is just the sum of rewards obtained in a fixed window of steps:</p>
+
+<p>\[R(\tau) = \sum_{t=0}^T r_t.\]</p>
+
+<p>Another kind of return is the infinite-horizon discounted return, which is the sum of all rewards ever obtained by the agent, but discounted by how far off in the future they’re obtained. This formulation of reward includes a discount factor \(\gamma \in (0,1):\)</p>
+
+<p>\[R(\tau) = \sum_{t=0}^{\infty} \gamma^t r_t.\]</p>
+
+<h4 id="toc_10">Why would we ever want a discount factor \(\gamma\), though?</h4>
+
+<p>Don’t we just want to get all rewards? We do, but the discount factor is both intuitively appealing and mathematically convenient. On an intuitive level: cash now is better than cash later. Mathematically: an infinite-horizon sum of rewards may not converge to a finite value, and is hard to deal with in equations. But with a discount factor and under reasonable conditions, the infinite sum converges.</p>
+
+<p>这里 discount factor 1. 直观来讲是因为当前奖励比未来奖励更重要，2. 数学上，无限奖励的和很难收敛到一个有限值，很难处理。增加一个 discount factor 无限和将会收敛。</p>
+
+<p>While the line between these two formulations of return are quite stark in RL formalism, deep RL practice tends to blur the line a fair bit—for instance, we frequently set up algorithms to optimize the undiscounted return, but use discount factors in estimating value functions.</p>
+
+<p>实际上 Deep RL 会比较模糊着两者，比如：我们经常使用算法来优化一个 undiscountered return 但是使用 discount factors 来估计 value-function.</p>
+
+<h4 id="toc_11">5 The RL Problem</h4>
+
+<p>Whatever the choice of return measure (whether infinite-horizon discounted, or finite-horizon undiscounted), and whatever the choice of policy, the goal in RL is to select a policy which <strong>maximizes expected return</strong> when the agent acts according to it.</p>
+
+<p>To talk about expected return, we first have to talk about probability distributions over trajectories.</p>
+
+<p>Let’s suppose that both the environment transitions and the policy are stochastic. In this case, the probability of a T -step trajectory is:</p>
+
+<p>\[P(\tau|\pi) = \rho_0 (s_0) \prod_{t=0}^{T-1} P(s_{t+1} | s_t, a_t) \pi(a_t | s_t).\]</p>
+
+<p>he expected return (for whichever measure), denoted by \(J(\pi),\) is then:</p>
+
+<p>\[J(\pi) = \int_{\tau} P(\tau|\pi) R(\tau) = E_{\tau\sim \pi}{R(\tau)}.\]</p>
+
+<p>The central optimization problem in RL can then be expressed by</p>
+
+<p>\[\pi^* = \arg \max_{\pi} J(\pi),\]</p>
+
+<p>with \(\pi^*\) being the optimal policy.</p>
+
+<h4 id="toc_12">6 Value Functions</h4>
+
+<p>t’s often useful to know the value of a state, or state-action pair. By value, we mean the expected return if you start in that state or state-action pair, and then act according to a particular policy forever after. Value functions are used, one way or another, in almost every RL algorithm.</p>
+
+<p>value 是 expected return 从当前 s 或者 s-a 开始的累计奖励，bellman 等式 v = r + v(s+1)</p>
+
+<p>There are four main functions of note here.</p>
+
+<p>4 种 V 和 Q 的表示</p>
+
+<ol>
+<li><p>The On-Policy Value Function, \(V^{\pi}(s)\), which gives the expected return if you start in state s and always act according to policy \(\pi\):</p>
+<p>\[V^{\pi}(s) = E_{\tau \sim \pi}{R(\tau)\left| s_0 = s\right.}\]</p></li>
+<li><p>The On-Policy Action-Value Function, \(Q^{\pi}(s,a)\), which gives the expected return if you start in state s, take an arbitrary action a (which may not have come from the policy), and then forever after act according to policy \pi:</p>
+<p>\[Q^{\pi}(s,a) = E_{\tau \sim \pi}{R(\tau)\left| s_0 = s, a_0 = a\right.}\]</p></li>
+<li><p>The Optimal Value Function, \(V^*(s)\), which gives the expected return if you start in state s and always act according to the optimal policy in the environment:</p>
+<p>\[V^*(s) = \max_{\pi} E_{\tau \sim \pi}{R(\tau)\left| s_0 = s\right.}\]</p></li>
+<li><p>The Optimal Action-Value Function, \(Q^*(s,a)\), which gives the expected return if you start in state s, take an arbitrary action a, and then forever after act according to the optimal policy in the environment:</p>
+<p>\[Q^*(s,a) = \max_{\pi} E_{\tau \sim \pi}{R(\tau)\left| s_0 = s, a_0 = a\right.}\]</p></li>
+</ol>
+
+<p>When we talk about value functions, if we do not make reference to time-dependence, we only mean expected infinite-horizon discounted return. Value functions for finite-horizon undiscounted return would need to accept time as an argument. </p>
+
+<h4 id="toc_13">6.1 V and Q 之间的关系</h4>
+
+<p>There are two key connections between the value function and the action-value function that come up pretty often:</p>
+
+<p>\[V^{\pi}(s) = E_{a\sim \pi}{Q^{\pi}(s,a)},\]</p>
+
+<p>Q 的期望，也就是平均值就是 V 该状态下执行 action 的平均值<br/>
+and</p>
+
+<p>\[V^*(s) = \max_a Q^* (s,a).\] <br/>
+最大 Q 就是执行某个最优动作获得最大值的 Q 或者 V</p>
+
+<p>These relations follow pretty directly from the definitions just given.</p>
+
+<h4 id="toc_14">6.2 The Optimal Q-Function and the Optimal Action 优化 Q 和 action</h4>
+
+<p>There is an important connection between the optimal action-value function \(Q^*(s,a)\) and the action selected by the optimal policy. By definition, \(Q^*(s,a)\) gives the expected return for starting in state s, taking (arbitrary) action a, and then acting according to the optimal policy forever after.</p>
+
+<p>The optimal policy in s will select whichever action maximizes the expected return from starting in s. As a result, if we have \(Q^*\), we can directly obtain the optimal action, \(a^*(s)\), via</p>
+
+<p>\[a^*(s) = \arg \max_a Q^* (s,a).\]</p>
+
+<p>最优的策略执行最大化 expected return 的动作，如果我们有了 \(Q^*\) 可以直接计算最优的 action 了。</p>
+
+<p>Note: there may be multiple actions which maximize \(Q^*(s,a)\), in which case, all of them are optimal, and the optimal policy may randomly select any of them. But there is always an optimal policy which deterministically selects an action.</p>
+
+<p>最优的 action 可能有很多了，优化策略随机选一个即可。但是我们通常有一个最优策略来决定选一个确定的动作。</p>
+
+<h4 id="toc_15">7 Bellman Equations</h4>
+
+<p>All four of the value functions obey special self-consistency equations called Bellman equations. The basic idea behind the Bellman equations is this:</p>
+
+<pre><code class="language-text">The value of your starting point is the reward you expect to 
+get from being there, plus the value of wherever you land next.
+</code></pre>
+
+<p>以上 4 个 Q V 都是 Bellman 等式，基本的思想是：开始点 state 的 V 就是从这个点开始之后你所期望获得的奖励 r 加上+ 下一步的 V(s+1) （无论你下一步怎么走）.</p>
+
+<h4 id="toc_16">The Bellman equations for the on-policy value functions are</h4>
+
+<p>\[\begin{align*}<br/>
+V^{\pi}(s) &amp;= E_{a \sim \pi \\ s&#39;\sim P}{r(s,a) + \gamma V^{\pi}(s&#39;)}, \\<br/>
+Q^{\pi}(s,a) &amp;= E_{s&#39;\sim P}{r(s,a) + \gamma E_{a&#39;\sim \pi}{Q^{\pi}(s&#39;,a&#39;)}},<br/>
+\end{align*}\]</p>
+
+<p>where \(s&#39; \sim\) P is shorthand for \(s&#39; \sim P(\cdot |s,a)\), indicating that the next state \(s&#39;\) is sampled from the environment’s transition rules; a \(\sim \pi\) is shorthand for a \(\sim \pi(\cdot|s)\); and a&#39; \sim \pi is shorthand for \(a&#39; \sim \)\(\pi(\cdot|s&#39;)\).</p>
+
+<h4 id="toc_17">The Bellman equations for the optimal value functions are</h4>
+
+<p>\[\begin{align*}<br/>
+V^*(s) &amp;= \max_a E_{s&#39;\sim P}{r(s,a) + \gamma V^*(s&#39;)}, \\<br/>
+Q^*(s,a) &amp;= E_{s&#39;\sim P}{r(s,a) + \gamma \max_{a&#39;} Q^*(s&#39;,a&#39;)}.<br/>
+\end{align*}\]</p>
+
+<p>The crucial difference between the Bellman equations for the on-policy value functions and the optimal value functions, is the absence or presence of the \max over actions. Its inclusion reflects the fact that whenever the agent gets to choose its action, in order to act optimally, it has to pick whichever action leads to the highest value.</p>
+
+<p>The term “Bellman backup” comes up quite frequently in the RL literature. The Bellman backup for a state, or state-action pair, is the right-hand side of the Bellman equation: the reward-plus-next-value.</p>
+
+<p>“Bellman backup” 这个词经常用，是 Bellman 等式右边的值 r + v(s+1)</p>
+
+<h4 id="toc_18">8 Advantage Functions</h4>
+
+<p>Sometimes in RL, we don’t need to describe how good an action is in an absolute sense, but only how much better it is than others on average. That is to say, we want to know the relative advantage of that action. We make this concept precise with the advantage function.</p>
+
+<p>Advantage  Functions 用来表示执行一个动作比平均值好多少。</p>
+
+<p>The advantage function \(A^{\pi}(s,a)\) corresponding to a policy \pi describes how much better it is to take a specific action a in state s, over randomly selecting an action according to \(\pi(\cdot|s)\), assuming you act according to \(\pi\) forever after. Mathematically, the advantage function is defined by</p>
+
+<p>\[A^{\pi}(s,a) = Q^{\pi}(s,a) - V^{\pi}(s).\]</p>
+
+<p>We’ll discuss this more later, but the advantage function is crucially important to policy gradient methods. </p>
+
+<p>advantage function  对于策略梯度方法（PG） 很重要</p>
+
+<h4 id="toc_19">Dueling DQN 中 advantage function 的使用</h4>
+
+<p>值函数 Q 被分解为状态值函数和优势函数（Advantage Function），即： <br/>
+    \[Qπ(s,a)=Vπ(s)+Aπ(s,a)\]</p>
+
+<p>优势函数可以表现出当前行动和平均表现之间的区别：如果优于平均表现，那么优势函数为正，反之则为负。我们对优势函数加一个限定，我们知道优势函数的期望为 0，将公式变成：<br/>
+\[Qπ(s,a)=Vπ(s)+(Aπ(s,a)−\frac{1}{|A|} ∑a′A(s,a′))\]</p>
+
+<p>让每个A值减去档期状态所有A值得平均值，可以保证期望值为0的约束，从而增加了整理输出的稳定性。</p>
+
+<p>这样做到底有什么好处呢？首先，如果在某些场景下序号使用 V 的值，我们不用再训练一个网络。同时，通过显式地给出 V函数的输出值，每一次更新时，我们都会显式地更新 V函数。这样V函数的更新频率会得到确定性的增加，对于单一输出的Q网络来说，它的更新就显得有些晦涩。从网络训练角度看，这样做使得网络训练更友好且容易。</p>
+
+<h4 id="toc_20">9 (Optional) Formalism</h4>
+
+<p>So far, we’ve discussed the agent’s environment in an informal way, but if you try to go digging through the literature, you’re likely to run into the standard mathematical formalism for this setting: Markov Decision Processes (MDPs). An MDP is a 5-tuple, \(\langle S, A, R, P, \rho_0 \rangle,\) where</p>
+
+<ul>
+<li>S is the set of all valid states,</li>
+<li>A is the set of all valid actions,</li>
+<li>R : S \(\times A \times S \to \mathbb{R} \)is the reward function, with r_t = R(s_t, a_t, s_{t+1}),</li>
+<li>P : \(S \times A \to \mathcal{P}(S)\) is the transition probability function, with \(P(s&#39;|s,a)\) being the probability of transitioning into state s&#39; if you start in state s and take action a,</li>
+<li>and \(\rho_0\) is the starting state distribution.<br/>
+The name Markov Decision Process refers to the fact that the system obeys the Markov property: transitions only depend on the most recent state and action, and no prior history.</li>
+</ul>
 
 </div></body>
 
