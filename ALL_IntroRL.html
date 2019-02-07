@@ -767,6 +767,487 @@ Q^*(s,a) &amp;= E_{s&#39;\sim P}{r(s,a) + \gamma \max_{a&#39;} Q^*(s&#39;,a&#39;
 The name Markov Decision Process refers to the fact that the system obeys the Markov property: transitions only depend on the most recent state and action, and no prior history.</li>
 </ul>
 
+<h3 id="toc_21">Part2: Kinds of RL Algorithms</h3>
+
+<p><img src="https://i.imgur.com/rKOt5Ic.jpg" alt="" style="width:880px;"/></p>
+
+<h4 id="toc_22">1 Model-Free vs Model-Based RL</h4>
+
+<p>One of the most important branching points in an RL algorithm is the question of whether the agent has access to (or learns) a model of the environment. By a model of the environment, we mean a function which predicts state transitions and rewards.</p>
+
+<p>The main upside to having a model is that it allows the agent to plan by thinking ahead, seeing what would happen for a range of possible choices, and explicitly deciding between its options. Agents can then distill the results from planning ahead into a learned policy. A particularly famous example of this approach is AlphaZero. When this works, it can result in a substantial improvement in sample efficiency over methods that don’t have a model.</p>
+
+<p>The main downside is that a ground-truth model of the environment is usually not available to the agent. If an agent wants to use a model in this case, it has to learn the model purely from experience, which creates several challenges. The biggest challenge is that bias in the model can be exploited by the agent, resulting in an agent which performs well with respect to the learned model, but behaves sub-optimally (or super terribly) in the real environment. Model-learning is fundamentally hard, so even intense effort—being willing to throw lots of time and compute at it—can fail to pay off.</p>
+
+<p>Algorithms which use a model are called model-based methods, and those that don’t are called model-free. While model-free methods forego the potential gains in sample efficiency from using a model, they tend to be easier to implement and tune. As of the time of writing this introduction (September 2018), model-free methods are more popular and have been more extensively developed and tested than model-based methods.</p>
+
+<p>model-free 更受欢迎一些，并且得到了更多的发展和关注相比于 model-based 的方法。</p>
+
+<h4 id="toc_23">What to Learn</h4>
+
+<p>Another critical branching point in an RL algorithm is the question of what to learn. The list of usual suspects includes</p>
+
+<ul>
+<li>policies, either stochastic or deterministic,</li>
+<li>action-value functions (Q-functions),</li>
+<li>value functions,</li>
+<li>and/or environment models.</li>
+</ul>
+
+<p>强化学习包含了 policy Q V-function 的学习以及环境模型.</p>
+
+<h4 id="toc_24">2 What to Learn in Model-Free RL</h4>
+
+<p>There are two main approaches to representing and training agents with model-free RL:</p>
+
+<h4 id="toc_25">2.1 Policy Optimization</h4>
+
+<p>Methods in this family represent a policy explicitly as \(\pi_{\theta}(a|s).\) They optimize the parameters \(\theta\) either directly by gradient ascent on the performance objective \(J(\pi_{\theta})\), or indirectly, by maximizing local approximations of \(J(\pi_{\theta})\). This optimization is almost always performed on-policy, which means that each update only uses data collected while acting according to the most recent version of the policy. Policy optimization also usually involves learning an approximator \(V_{\phi}(s)\) for the on-policy value function \(V^{\pi}(s)\), which gets used in figuring out how to update the policy.</p>
+
+<p>策略优化是估计 V 值，从最近策略中采集数据来更新策略 on-policy 。</p>
+
+<p>A couple of examples of policy optimization methods are: <br/>
+策略优化的一些方法</p>
+
+<ul>
+<li>A2C / A3C, which performs gradient ascent to directly maximize performance, A3C 是梯度上升最大化性能</li>
+<li>and PPO, whose updates indirectly maximize performance, by instead maximizing a surrogate objective function which gives a conservative estimate for how much \(J(\pi_{\theta})\) will change as a result of the update. PPO 是简介的最大化 performance </li>
+</ul>
+
+<h4 id="toc_26">2.2 Q-Learning</h4>
+
+<p>Methods in this family learn an approximator \(Q_{\theta}(s,a) \)for the optimal action-value function, \(Q^*(s,a)\). Typically they use an objective function based on the Bellman equation. This optimization is almost always performed off-policy, which means that each update can use data collected at any point during training, regardless of how the agent was choosing to explore the environment when the data was obtained. The corresponding policy is obtained via the connection between \(Q^* \) and \(\pi^*:\) the actions taken by the Q-learning agent are given by</p>
+
+<p>另一种方法是 Q 学习，从训练数据中学习是 off-policy 方法。</p>
+
+<p>\[a(s) = \arg \max_a Q_{\theta}(s,a).\]</p>
+
+<p>Examples of Q-learning methods include</p>
+
+<ul>
+<li>DQN, a classic which substantially launched the field of deep RL,</li>
+<li>and C51, a variant that learns a distribution over return whose expectation is \(Q^*\).</li>
+</ul>
+
+<p>DQN 和 C51 算法使用了 Q-learning 方法。</p>
+
+<h4 id="toc_27">2.3 Trade-offs Between Policy Optimization and Q-Learning.</h4>
+
+<p>PG 和  Q-learning 之间的权衡</p>
+
+<p>The primary strength of policy optimization methods is that they are principled, in the sense that you directly optimize for the thing you want. This tends to make them stable and reliable. By contrast, Q-learning methods only indirectly optimize for agent performance, by training \(Q_{\theta}\) to satisfy a self-consistency equation. There are many failure modes for this kind of learning, so it tends to be less stable. [1] But, Q-learning methods gain the advantage of being substantially more sample efficient when they do work, because they can reuse data more effectively than policy optimization techniques.</p>
+
+<p>PG 更加直观的优化了 policy 是 stable 和 reliable 稳定可靠性比较好，Q-learning 通过学习 Q 值来间接学习，有时候会失败。但是 Q-learning 实际中更加高效，因为它数据重新使用比 PG 更加高效。</p>
+
+<p>[1] For more information about how and why Q-learning methods can fail, see 1) this classic paper by Tsitsiklis and van Roy, 2) the (much more recent) review by Szepesvari (in section 4.3.2), and 3) chapter 11 of Sutton and Barto, especially section 11.3 (on “the deadly triad” of function approximation, bootstrapping, and off-policy data, together causing instability in value-learning algorithms).</p>
+
+<p>这个 paper 说明了为什么 Q-learning 有些时候会失败，function approximation, bootstrapping  off-policy data 函数逼近, 离线数据,bootstrapping 等造成了 Q-learning 有些时候会学习失败。</p>
+
+<h4 id="toc_28">2.4 Interpolating Between Policy Optimization and Q-Learning.</h4>
+
+<p>Serendipitously, policy optimization and Q-learning are not incompatible (and under some circumstances, it turns out, equivalent), and there exist a range of algorithms that live in between the two extremes. Algorithms that live on this spectrum are able to carefully trade-off between the strengths and weaknesses of either side. Examples include</p>
+
+<p>有些时候 PG 和 Q-Learning 是不兼容的，但是也有一些一起的例子。DDPG SAC 这种</p>
+
+<ul>
+<li>DDPG, an algorithm which concurrently learns a deterministic policy and a Q-function by using each to improve the other, DDPG 就是并行的学习一个确定的策略 deterministic policy和 Q-function 然后来彼此提高。</li>
+<li>and SAC, a variant which uses stochastic policies, entropy regularization, and a few other tricks to stabilize learning and score higher than DDPG on standard benchmarks. SAC 使用了 entropy regularization 在随机策略上，并且使用一些其他技巧使得学习更加稳定和比 DDPG 得分更好。</li>
+</ul>
+
+<h4 id="toc_29">3 What to Learn in Model-Based RL model-based 学什么</h4>
+
+<h4 id="toc_30">3.1 Background: Pure Planning.</h4>
+
+<p>The most basic approach never explicitly represents the policy, and instead, uses pure planning techniques like model-predictive control (MPC) to select actions. In MPC, each time the agent observes the environment, it computes a plan which is optimal with respect to the model, where the plan describes all actions to take over some fixed window of time after the present. (Future rewards beyond the horizon may be considered by the planning algorithm through the use of a learned value function.) The agent then executes the first action of the plan, and immediately discards the rest of it. It computes a new plan each time it prepares to interact with the environment, to avoid using an action from a plan with a shorter-than-desired planning horizon.</p>
+
+<ul>
+<li>The MBMF work explores MPC with learned environment models on some standard benchmark tasks for deep RL.</li>
+</ul>
+
+<h4 id="toc_31">3.2 Expert Iteration.</h4>
+
+<p>A straightforward follow-on to pure planning involves using and learning an explicit representation of the policy, \(\pi_{\theta}(a|s).\)  The agent uses a planning algorithm (like Monte Carlo Tree Search) in the model, generating candidate actions for the plan by sampling from its current policy. The planning algorithm produces an action which is better than what the policy alone would have produced, hence it is an “expert” relative to the policy. The policy is afterwards updated to produce an action more like the planning algorithm’s output.</p>
+
+<p>agent 使用算法（比如：Monte Carlo Tree Search） 根据当前策略生成一些备选的 actions, planning 算法生成一个 action (比当前策略独自生成的要好)，叫做 “expert”， policy 更新之后产生一个 action 更像是 planning 算法的输出。</p>
+
+<ul>
+<li>The ExIt algorithm uses this approach to train deep neural networks to play Hex.</li>
+<li>AlphaZero is another example of this approach.</li>
+</ul>
+
+<h4 id="toc_32">3.3 Embedding Planning Loops into Policies.</h4>
+
+<p>Another approach embeds the planning procedure directly into a policy as a subroutine—so that complete plans become side information for the policy—while training the output of the policy with any standard model-free algorithm. The key concept is that in this framework, the policy can learn to choose how and when to use the plans. This makes model bias less of a problem, because if the model is bad for planning in some states, the policy can simply learn to ignore it.</p>
+
+<ul>
+<li>See I2A for an example of agents being endowed with this style of imagination.</li>
+</ul>
+
+<h3 id="toc_33">Part 3: Intro to Policy Optimization</h3>
+
+<p>In this section, we’ll discuss the mathematical foundations of policy optimization algorithms, and connect the material to sample code. We will cover three key results in the theory of policy gradients:</p>
+
+<ul>
+<li>the simplest equation describing the gradient of policy performance with respect to policy parameters,</li>
+<li>a rule which allows us to drop useless terms from that expression,</li>
+<li>and a rule which allows us to add useful terms to that expression.</li>
+</ul>
+
+<p>Part3 就是 PG 策略梯度算法</p>
+
+<h4 id="toc_34">1 Deriving the Simplest Policy Gradient</h4>
+
+<p>Here, we consider the case of a stochastic, parameterized policy, \(\pi_{\theta}\). We aim to maximize the expected return \(J(\pi_{\theta}) = E_{\tau \sim \pi_{\theta}}{R(\tau)}. \)For the purposes of this derivation, we’ll take \(R(\tau)\) to give the finite-horizon undiscounted return, but the derivation for the infinite-horizon discounted return setting is almost identical.</p>
+
+<p>We would like to optimize the policy by gradient ascent, eg 需要优化的 policy 梯度上升</p>
+
+<p>\[\theta_{k+1} = \theta_k + \alpha \left. \nabla_{\theta} J(\pi_{\theta}) \right|_{\theta_k}.\]</p>
+
+<p>The gradient of policy performance, \(\nabla_{\theta} J(\pi_{\theta}),\) is called the policy gradient, and algorithms that optimize the policy this way are called policy gradient algorithms. (Examples include Vanilla Policy Gradient and TRPO. PPO is often referred to as a policy gradient algorithm, though this is slightly inaccurate.) </p>
+
+<p>VPG TRPO 都是 PG 算法 PPO 叫 PG 算法有点不准确。</p>
+
+<p>To actually use this algorithm, we need an expression for the policy gradient which we can numerically compute. This involves two steps: </p>
+
+<ol>
+<li>deriving the analytical gradient of policy performance, which turns out to have the form of an expected value, and then </li>
+<li>forming a sample estimate of that expected value, which can be computed with data from a finite number of agent-environment interaction steps.</li>
+</ol>
+
+<p>使用 PG 算法需要 2 步骤：<br/>
+第一：计算 policy 的梯度转变为一个 expected value <br/>
+第二：对这个 expected value 有一个取样估计（可以通过与环境不断交互获取数据来计算）</p>
+
+<p>In this subsection, we’ll find the simplest form of that expression. In later subsections, we’ll show how to improve on the simplest form to get the version we actually use in standard policy gradient implementations.</p>
+
+<p>We’ll begin by laying out a few facts which are useful for deriving the analytical gradient.</p>
+
+<h4 id="toc_35">2 deriving the analytical gradient.</h4>
+
+<ol>
+<li><p>Probability of a Trajectory. The probability of a trajectory \(\tau = (s_0, a_0, ..., s_{T+1})\) given that actions come from \(\pi_{\theta}\) is</p>
+<p>\[P(\tau|\theta) = \rho_0 (s_0) \prod_{t=0}^{T} P(s_{t+1}|s_t, a_t) \pi_{\theta}(a_t |s_t).\]</p>
+<p>轨迹的概率表示</p></li>
+<li><p>The Log-Derivative Trick. The log-derivative trick is based on a simple rule from calculus: the derivative of \(\log\) x with respect to x is 1/x. When rearranged and combined with chain rule, we get:</p>
+<p>\[\nabla_{\theta} P(\tau | \theta) = P(\tau | \theta) \nabla_{\theta} \log P(\tau | \theta).\]</p>
+<p>log 派生表示技巧</p></li>
+<li><p>Log-Probability of a Trajectory. The log-prob of a trajectory is just</p>
+<p>\[\log P(\tau|\theta) = \log \rho_0 (s_0) + \sum_{t=0}^{T} \bigg( \log P(s_{t+1}|s_t, a_t)  + \log \pi_{\theta}(a_t |s_t)\bigg).\]</p>
+<p>log 概率来表示一个轨迹</p></li>
+<li><p>Gradients of Environment Functions. The environment has no dependence on \theta, so gradients of \(\rho_0(s_0), P(s_{t+1}|s_t, a_t), and R(\tau)\) are zero.</p></li>
+<li><p>Grad-Log-Prob of a Trajectory. The gradient of the log-prob of a trajectory is thus</p>
+<p><img src="https://i.imgur.com/1CPA88I.jpg" alt="" style="width:798px;"/></p></li>
+</ol>
+
+<p>This is an expectation, which means that we can estimate it with a sample mean. If we collect a set of trajectories \(\mathcal{D} = \{\tau_i\}_{i=1,...,N}\) where each trajectory is obtained by letting the agent act in the environment using the policy \(\pi_{\theta}\), the policy gradient can be estimated with</p>
+
+<p>\[\hat{g} = \frac{1}{|\mathcal{D}|} \sum_{\tau \in \mathcal{D}} \sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}(a_t |s_t) R(\tau),\]</p>
+
+<p>where \(|\mathcal{D}|\)is the number of trajectories in \(\mathcal{D} (here, N).\)</p>
+
+<p>使用轨迹数据集 D 中来计算策略梯度</p>
+
+<p>This last expression is the simplest version of the computable expression we desired. Assuming that we have represented our policy in a way which allows us to calculate \(\nabla_{\theta} \log \pi_{\theta}(a|s)\), and if we are able to run the policy in the environment to collect the trajectory dataset, we can compute the policy gradient and take an update step.</p>
+
+<p>从环境中收集数据 D 然后计算 PG 并且更新操作。</p>
+
+<h4 id="toc_36">3. Implementing the Simplest Policy Gradient  简单实现</h4>
+
+<pre><code class="language-python">import tensorflow as tf
+import numpy as np
+import gym
+from gym.spaces import Discrete, Box
+
+def mlp(x, sizes, activation=tf.tanh, output_activation=None):
+    # Build a feedforward neural network.
+    for size in sizes[:-1]:
+        x = tf.layers.dense(x, units=size, activation=activation)
+    return tf.layers.dense(x, units=sizes[-1], activation=output_activation)
+
+def train(env_name=&#39;CartPole-v0&#39;, hidden_sizes=[32], lr=1e-2, 
+          epochs=50, batch_size=5000, render=False):
+
+    # make environment, check spaces, get obs / act dims
+    env = gym.make(env_name)
+    assert isinstance(env.observation_space, Box), \
+        &quot;This example only works for envs with continuous state spaces.&quot;
+    assert isinstance(env.action_space, Discrete), \
+        &quot;This example only works for envs with discrete action spaces.&quot;
+
+    obs_dim = env.observation_space.shape[0]
+    n_acts = env.action_space.n
+
+    # make core of policy network
+    obs_ph = tf.placeholder(shape=(None, obs_dim), dtype=tf.float32)
+    logits = mlp(obs_ph, sizes=hidden_sizes+[n_acts])
+
+    # make action selection op (outputs int actions, sampled from policy)
+    actions = tf.squeeze(tf.multinomial(logits=logits,num_samples=1), axis=1)
+
+    # make loss function whose gradient, for the right data, is policy gradient
+    weights_ph = tf.placeholder(shape=(None,), dtype=tf.float32)
+    act_ph = tf.placeholder(shape=(None,), dtype=tf.int32)
+    action_masks = tf.one_hot(act_ph, n_acts)
+    log_probs = tf.reduce_sum(action_masks * tf.nn.log_softmax(logits), axis=1)
+    loss = -tf.reduce_mean(weights_ph * log_probs)
+
+    # make train op
+    train_op = tf.train.AdamOptimizer(learning_rate=lr).minimize(loss)
+
+    sess = tf.InteractiveSession()
+    sess.run(tf.global_variables_initializer())
+
+    # for training policy
+    def train_one_epoch():
+        # make some empty lists for logging.
+        batch_obs = []          # for observations
+        batch_acts = []         # for actions
+        batch_weights = []      # for R(tau) weighting in policy gradient
+        batch_rets = []         # for measuring episode returns
+        batch_lens = []         # for measuring episode lengths
+
+        # reset episode-specific variables
+        obs = env.reset()       # first obs comes from starting distribution
+        done = False            # signal from environment that episode is over
+        ep_rews = []            # list for rewards accrued throughout ep
+
+        # render first episode of each epoch
+        finished_rendering_this_epoch = False
+
+        # collect experience by acting in the environment with current policy
+        while True:
+
+            # rendering
+            if (not finished_rendering_this_epoch) and render:
+                env.render()
+
+            # save obs
+            batch_obs.append(obs.copy())
+
+            # act in the environment
+            act = sess.run(actions, {obs_ph: obs.reshape(1,-1)})[0]
+            obs, rew, done, _ = env.step(act)
+
+            # save action, reward
+            batch_acts.append(act)
+            ep_rews.append(rew)
+
+            if done:
+                # if episode is over, record info about episode
+                ep_ret, ep_len = sum(ep_rews), len(ep_rews)
+                batch_rets.append(ep_ret)
+                batch_lens.append(ep_len)
+
+                # the weight for each logprob(a|s) is R(tau)
+                batch_weights += [ep_ret] * ep_len
+
+                # reset episode-specific variables
+                obs, done, ep_rews = env.reset(), False, []
+
+                # won&#39;t render again this epoch
+                finished_rendering_this_epoch = True
+
+                # end experience loop if we have enough of it
+                if len(batch_obs) &gt; batch_size:
+                    break
+
+        # take a single policy gradient update step
+        batch_loss, _ = sess.run([loss, train_op],
+                                 feed_dict={
+                                    obs_ph: np.array(batch_obs),
+                                    act_ph: np.array(batch_acts),
+                                    weights_ph: np.array(batch_weights)
+                                 })
+        return batch_loss, batch_rets, batch_lens
+
+    # training loop
+    for i in range(epochs):
+        batch_loss, batch_rets, batch_lens = train_one_epoch()
+        print(&#39;epoch: %3d \t loss: %.3f \t return: %.3f \t ep_len: %.3f&#39;%
+                (i, batch_loss, np.mean(batch_rets), np.mean(batch_lens)))
+
+if __name__ == &#39;__main__&#39;:
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument(&#39;--env_name&#39;, &#39;--env&#39;, type=str, default=&#39;CartPole-v0&#39;)
+    parser.add_argument(&#39;--render&#39;, action=&#39;store_true&#39;)
+    parser.add_argument(&#39;--lr&#39;, type=float, default=1e-2)
+    args = parser.parse_args()
+    print(&#39;\nUsing simplest formulation of policy gradient.\n&#39;)
+    train(env_name=args.env_name, render=args.render, lr=args.lr)
+</code></pre>
+
+<ul>
+<li><p>categorical policy<br/>
+this block builds a feedforward neural network categorical policy. (See the Stochastic Policies section in Part 1 for a refresher.) The logits tensor can be used to construct log-probabilities and probabilities for actions, and the actions tensor samples actions based on the probabilities implied by logits.<br/><br/>
+离散空间策略(类似于softmax 分类器)</p>
+<p>In this block, we build a “loss” function for the policy gradient algorithm. When the right data is plugged in, the gradient of this loss is equal to the policy gradient. The right data means a set of (state, action, weight) tuples collected while acting according to the current policy, where the weight for a state-action pair is the return from the episode to which it belongs. (Although as we will show in later subsections, there are other values you can plug in for the weight which also work correctly.)</p>
+<p>The approach used here to make the log_probs tensor—creating an action mask, and using it to select out particular log probabilities—only works for categorical policies. It does not work in general. <br/>
+这里使用了一个 action_mask 仅仅是在 categorical policy 中使用，不具有通用性。</p></li>
+</ul>
+
+<h4 id="toc_37">4 loss PG 中的 loss 与监督学习中 loss 的区别</h4>
+
+<p>Even though we describe this as a loss function, it is not a loss function in the typical sense from supervised learning. There are two main differences from standard loss functions.    </p>
+
+<ol>
+<li><p>The data distribution depends on the parameters. <br/>
+A loss function is usually defined on a fixed data distribution which is independent of the parameters we aim to optimize. Not so here, where the data must be sampled on the most recent policy.</p>
+<p>区别 1：数据发布依赖于神经网络的参数, 而且数据从最近的 policy 网络中获取。</p></li>
+<li><p>It doesn’t measure performance. <br/>
+A loss function usually evaluates the performance metric that we care about. Here, we care about expected return, \(J(\pi_{\theta})\), but our “loss” function does not approximate this at all, even in expectation. This “loss” function is only useful to us because, when evaluated at the current parameters, with data generated by the current parameters, it has the negative gradient of performance. </p>
+<p>区别2：该 loss 与 performance 无关,  我们只关心 average return, loss 不需要关心。</p></li>
+</ol>
+
+<p>But after that first step of gradient descent, there is no more connection to performance. This means that minimizing this “loss” function, for a given batch of data, has no guarantee whatsoever of improving expected return. You can send this loss to \(-\infty\) and policy performance could crater; in fact, it usually will. Sometimes a deep RL researcher might describe this outcome as the policy “overfitting” to a batch of data. This is descriptive, but should not be taken literally because it does not refer to generalization error.</p>
+
+<p>We raise this point because it is common for ML practitioners to interpret a loss function as a useful signal during training—”if the loss goes down, all is well.” In policy gradients, this intuition is wrong, and you should only care about average return. The loss function means nothing.    </p>
+
+<h4 id="toc_38">5 Expected Grad-Log-Prob Lemma</h4>
+
+<p>In this subsection, we will derive an intermediate result which is extensively used throughout the theory of policy gradients. We will call it the Expected Grad-Log-Prob (EGLP) lemma. </p>
+
+<p>GLP Lemma. Suppose that P_{\theta} is a parameterized probability distribution over a random variable, x. Then:</p>
+
+<p>\[E_{x \sim P_{\theta}}{\nabla_{\theta} \log P_{\theta}(x)} = 0.\]</p>
+
+<h4 id="toc_39">6 reward-to-go policy gradient</h4>
+
+<p>Examine our most recent expression for the policy gradient:</p>
+
+<p>\[\nabla_{\theta} J(\pi_{\theta}) = E_{\tau \sim \pi_{\theta}}{\sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}(a_t |s_t) R(\tau)}.\]</p>
+
+<p>Taking a step with this gradient pushes up the log-probabilities of each action in proportion to \(R(\tau)\), the sum of all rewards ever obtained. But this doesn’t make much sense.</p>
+
+<p>Agents should really only reinforce actions on the basis of their consequences. Rewards obtained before taking an action have no bearing on how good that action was: only rewards that come after.</p>
+
+<p>这里我们一直在用 \(R(\tau)\) 但实际上它没有意义，因为 Reward 在执行动作之前获取到不会影响一个动作的好坏程度，所以奖励应该在动作执行之后获取。</p>
+
+<p>It turns out that this intuition shows up in the math, and we can show that the policy gradient can also be expressed by</p>
+
+<p>\[\nabla_{\theta} J(\pi_{\theta}) = E_{\tau \sim \pi_{\theta}}{\sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}(a_t |s_t) \sum_{t&#39;=t}^T R(s_{t&#39;}, a_{t&#39;}, s_{t&#39;+1})}.\]</p>
+
+<p>In this form, actions are only reinforced based on rewards obtained after they are taken.</p>
+
+<p>在上面的公式中 Reward 就是在动作执行之后获取的，我们管这个叫 reward-to-go 就是在这个一个完整轨迹中某个点之后的奖励之和。</p>
+
+<p>We’ll call this form the “reward-to-go policy gradient,” because the sum of rewards after a point in a trajectory,</p>
+
+<p>\[\hat{R}_t \doteq \sum_{t&#39;=t}^T R(s_{t&#39;}, a_{t&#39;}, s_{t&#39;+1}),\]</p>
+
+<p>is called the reward-to-go from that point, and this policy gradient expression depends on the reward-to-go from state-action pairs.</p>
+
+<ul>
+<li>But how is this better? <br/>
+A key problem with policy gradients is how many sample trajectories are needed to get a low-variance sample estimate for them. The formula we started with included terms for reinforcing actions proportional to past rewards, all of which had zero mean, but nonzero variance: as a result, they would just add noise to sample estimates of the policy gradient. By removing them, we reduce the number of sample trajectories needed.</li>
+</ul>
+
+<p>为什么需要 reward-to-go 这么做的好处是什么？原因在于 PG 算法有个核心问题就是取样多少轨迹数据来得到一个低 variance 方差的样本估计呢，如果使用开始的那种过去 actions 的奖励，它们平均值是 0 但是方差 variance 不是 0，这样就会导致添加了 noise 在 PG 的样本估计中。我们通过移除它们，来减少取样轨迹数据。</p>
+
+<p><a href="https://spinningup.openai.com/en/latest/spinningup/extra_pg_proof1.html">https://spinningup.openai.com/en/latest/spinningup/extra_pg_proof1.html</a></p>
+
+<pre><code class="language-python">def reward_to_go(rews):
+    n = len(rews)
+    rtgs = np.zeros_like(rews)
+    for i in reversed(range(n)):
+        rtgs[i] = rews[i] + (rtgs[i+1] if i+1 &lt; n else 0)
+    return rtgs
+</code></pre>
+
+<h4 id="toc_40">7 Baselines in Policy Gradients</h4>
+
+<p>An immediate consequence of the EGLP lemma is that for any function b which only depends on state,</p>
+
+<p>\[E_{a_t \sim \pi_{\theta}}{\nabla_{\theta} \log \pi_{\theta}(a_t|s_t) b(s_t)} = 0.\]</p>
+
+<p>This allows us to add or subtract any number of terms like this from our expression for the policy gradient, without changing it in expectation:</p>
+
+<p>\[\nabla_{\theta} J(\pi_{\theta}) = E_{\tau \sim \pi_{\theta}}{\sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}(a_t |s_t) \left(\sum_{t&#39;=t}^T R(s_{t&#39;}, a_{t&#39;}, s_{t&#39;+1}) - b(s_t)\right)}.\]</p>
+
+<p>Any function b used in this way is called a <strong>baseline.</strong></p>
+
+<p>PG 中的 baseline 函数</p>
+
+<p>The most common choice of baseline is the on-policy value function \(V^{\pi}(s_t)\). Recall that this is the average return an agent gets if it starts in state s_t and then acts according to policy \(\pi\) for the rest of its life.</p>
+
+<p>大多数时候 baseline 函数都是选择 on-policy 的 V 函数。V 就是 state s 的平均 return 然后结算出来的就是根据 policy 得到的剩余.</p>
+
+<p>Empirically, the choice \(b(s_t) = V^{\pi}(s_t)\) has the desirable effect of reducing variance in the sample estimate for the policy gradient. This results in faster and more stable policy learning. It is also appealing from a conceptual angle: it encodes the intuition that if an agent gets what it expected, it should “feel” neutral about it.</p>
+
+<p>实际上当 baseline 取 V 的时候能够减少 PG 取样估计得方差。从而获得更加高速稳定的策略学习。</p>
+
+<p>In practice, \(V^{\pi}(s_t)\) cannot be computed exactly, so it has to be approximated. This is usually done with a neural network, \(V_{\phi}(s_t)\), which is updated concurrently with the policy (so that the value network always approximates the value function of the most recent policy).</p>
+
+<p>实际中，V 都是通过神经网络来拟合的，并且同时和 policy 网络一起更新。这样导致 value network 总是接近最近策略的 value-function。</p>
+
+<p>The simplest method for learning \(V_{\phi}\), used in most implementations of policy optimization algorithms (including VPG, TRPO, PPO, and A2C), is to minimize a mean-squared-error objective:</p>
+
+<p>\[\phi_k = \arg \min_{\phi} E_{s_t, \hat{R}_t \sim \pi_k}{\left( V_{\phi}(s_t) - \hat{R}_t \right)^2},\]</p>
+
+<p>where \(\pi_k\) is the policy at epoch k. This is done with one or more steps of gradient descent, starting from the previous value parameters \(\phi_{k-1}\).</p>
+
+<p>这个简单的学习 V 值得方法被用于大多数策略优化的算法中 VPG TRPO PPO A2C，最小化 MSE </p>
+
+<h4 id="toc_41">8 其他形式的 PG</h4>
+
+<p>What we have seen so far is that the policy gradient has the general form</p>
+
+<p>\[\nabla_{\theta} J(\pi_{\theta}) = E_{\tau \sim \pi_{\theta}}{\sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}(a_t |s_t) \Phi_t},\]</p>
+
+<p>where \(\Phi_t\) could be any of</p>
+
+<p>\[\Phi_t = R(\tau),\]</p>
+
+<p>or</p>
+
+<p>\[\Phi_t = \sum_{t&#39;=t}^T R(s_{t&#39;}, a_{t&#39;}, s_{t&#39;+1}),\]</p>
+
+<p>or</p>
+
+<p>\[\Phi_t = \sum_{t&#39;=t}^T R(s_{t&#39;}, a_{t&#39;}, s_{t&#39;+1}) - b(s_t).\]</p>
+
+<p>All of these choices lead to the same expected value for the policy gradient, despite having different variances. It turns out that there are two more valid choices of weights \Phi_t which are important to know.</p>
+
+<p>尽管有不同形式的 weights 选择，但是有两种更加合理的 weights 选择。</p>
+
+<ol>
+<li><p>On-Policy Action-Value Function. The choice</p>
+<p>\[\Phi_t = Q^{\pi_{\theta}}(s_t, a_t)\]</p>
+<p>is also valid. See this page for an (optional) proof of this claim.</p>
+<p><a href="https://spinningup.openai.com/en/latest/spinningup/extra_pg_proof2.html">https://spinningup.openai.com/en/latest/spinningup/extra_pg_proof2.html</a></p></li>
+<li><p>The Advantage Function. Recall that the advantage of an action, defined by \[A^{\pi}(s_t,a_t) = Q^{\pi}(s_t,a_t) - V^{\pi}(s_t),\] describes how much better or worse it is than other actions on average (relative to the current policy). This choice,</p>
+<p>\[\Phi_t = A^{\pi_{\theta}}(s_t, a_t)\]</p>
+<p>is also valid. The proof is that it’s equivalent to using \(\Phi_t = Q^{\pi_{\theta}}(s_t, a_t)\) and then using a value function baseline, which we are always free to do.<br/>
+Advantage Function 函数用来表示比平均值好多少。这个被证明和使用 Q +  baseline 效果一样的，虽然我们通常不这么做。</p>
+<p>The formulation of policy gradients with advantage functions is extremely common, and there are many different ways of estimating the advantage function used by different algorithms.</p>
+<p>For a more detailed treatment of this topic, you should read the paper on Generalized Advantage Estimation (GAE), which goes into depth about different choices of \(\Phi_t\) in the background sections.</p>
+<p>That paper then goes on to describe GAE, a method for approximating the advantage function in policy optimization algorithms which enjoys widespread use. For instance, Spinning Up’s implementations of VPG, TRPO, and PPO make use of it. As a result, we strongly advise you to study it.</p>
+<p>对于  \(\Phi_t\) 的选择不同算法有不同的选择，GAE 这篇 paper 给出了各种选择详细的解释，和深刻的讨论了不同选择之间的区别。并且描述了 GAE 这种算，在 PG 中用来近似估计  advantage function, 我们在实现 VPG TRPO PPO 这些算法中都使用了 GAE 来实现。</p>
+<p>While not providing a dramatic improvement, using Generalized Advantage Estimation (GAE) [3] did help performance. GAE introduces a parameter λ. Instead of using the total sum of discounted rewards to estimate the advantage, GAE uses a weighted sum of n-step advantages.</p>
+<pre><code class="language-text">1-step advantage: −V(st)+rt+γV(st+1) (temporal difference)
+2-step advantage: −V(st)+rt+γrt+1+γ2V(st+2)<br/>
+3-step advantage: −V(st)+rt+γrt+1+γ2rt+2+γ3V(st+3)
+</code></pre>
+<p>GAE weights each n-step advantage by λn−1 and sums them all together. This geometric weighting reduces the variance of the advantage estimator by decreasing the importance of future rewards. By setting λ=0, you get basic TD learning. With λ=1 you get the vanilla advantage function. See the paper for additional details [3].</p>
+<pre><code class="language-python">deltas = rews[:-1] + self.gamma * vals[1:] - vals[:-1]
+self.adv_buf[path_slice] = core.discount_cumsum(deltas, self.gamma * self.lam)<br/>
+def discount_cumsum(x, discount):<br/>
+    &quot;&quot;&quot;<br/>
+    magic from rllab for computing discounted cumulative sums of vectors.<br/>
+    input: <br/>
+        vector x, <br/>
+        [x0, <br/>
+         x1, <br/>
+         x2]<br/>
+    output:<br/>
+        [x0 + discount * x1 + discount^2 * x2,  <br/>
+         x1 + discount * x2,<br/>
+         x2]<br/>
+    &quot;&quot;&quot;<br/>
+    return scipy.signal.lfilter([1], [1, float(-discount)], x[::-1], axis=0)[::-1]
+</code></pre></li>
+</ol>
+
 </div></body>
 
 </html>
