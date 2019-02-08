@@ -1248,6 +1248,79 @@ def discount_cumsum(x, discount):<br/>
 </code></pre></li>
 </ol>
 
+<h4 id="toc_42">Part4: 成为一名 Deep RL Researcher</h4>
+
+<p><a href="https://spinningup.openai.com/en/latest/spinningup/spinningup.html">https://spinningup.openai.com/en/latest/spinningup/spinningup.html</a></p>
+
+<h4 id="toc_43">1 The Right Background</h4>
+
+<h4 id="toc_44">1.1 Build up a solid mathematical background.</h4>
+
+<p>From probability and statistics, feel comfortable with random variables, Bayes’ theorem, chain rule of probability, expected values, standard deviations, and importance sampling. From multivariate calculus, understand gradients and (optionally, but it’ll help) Taylor series expansions.</p>
+
+<p>数学基础</p>
+
+<h4 id="toc_45">1.2 Build up a general knowledge of deep learning.</h4>
+
+<p>You don’t need to know every single special trick and architecture, but the basics help. Know about </p>
+
+<ul>
+<li>standard architectures: MLP, vanilla RNN, LSTM (also see this blog), GRU, conv layers, resnets, attention mechanisms 熟悉常用的网络结构 </li>
+<li>common regularizers: weight decay, dropout 常用的 regularizers 方法</li>
+<li>normalization: batch norm, layer norm, weight norm 常用的 norm 方法</li>
+<li>optimizers: SGD, momentum SGD, Adam  常用的梯度优化算法</li>
+<li>reparameterization trick is. 参数重用技巧</li>
+</ul>
+
+<h4 id="toc_46">1.3 Become familiar with at least one deep learning library.</h4>
+
+<p>Tensorflow or PyTorch would be a good place to start. You don’t need to know how to do everything, but you should feel pretty confident in implementing a simple program to do supervised learning.</p>
+
+<h4 id="toc_47">1.4 Get comfortable with the main concepts and terminology in RL.</h4>
+
+<p>Know what states, actions, trajectories, policies, rewards, value functions, and action-value functions are. If you’re unfamiliar, Spinning Up ships with an introduction to this material; it’s also worth checking out the RL-Intro from the OpenAI Hackathon, or the exceptional and thorough overview by Lilian Weng. Optionally, if you’re the sort of person who enjoys mathematical theory, study up on the math of monotonic improvement theory (which forms the basis for advanced policy gradient algorithms), or classical RL algorithms (which despite being superseded by deep RL algorithms, contain valuable insights that sometimes drive new research).</p>
+
+<h4 id="toc_48">2 Learn by Doing</h4>
+
+<p>Write your own implementations. You should implement as many of the core deep RL algorithms from scratch as you can, with the aim of writing the shortest correct implementation of each. This is by far the best way to develop an understanding of how they work, as well as intuitions for their specific performance characteristics.</p>
+
+<p>Simplicity is critical. You should organize your efforts so that you implement the simplest algorithms first, and only gradually introduce complexity. If you start off trying to build something with too many moving parts, odds are good that it will break and you’ll lose weeks trying to debug it. This is a common failure mode for people who are new to deep RL, and if you find yourself stuck in it, don’t be discouraged—but do try to change tack and work on a simpler algorithm instead, before returning to the more complex thing later.</p>
+
+<p>Which algorithms? You should probably start with vanilla policy gradient (also called REINFORCE), DQN, A2C (the synchronous version of A3C), PPO (the variant with the clipped objective), and DDPG, approximately in that order. The simplest versions of all of these can be written in just a few hundred lines of code (ballpark 250-300), and some of them even less (for example, a no-frills version of VPG can be written in about 80 lines). Write single-threaded code before you try writing parallelized versions of these algorithms. (Do try to parallelize at least one.)</p>
+
+<p>Focus on understanding. Writing working RL code requires clear, detail-oriented understanding of the algorithms. This is because broken RL code almost always fails silently, where the code appears to run fine except that the agent never learns how to solve the task. Usually the problem is that something is being calculated with the wrong equation, or on the wrong distribution, or data is being piped into the wrong place. Sometimes the only way to find these bugs is to read the code with a critical eye, know exactly what it should be doing, and find where it deviates from the correct behavior. Developing that knowledge requires you to engage with both academic literature and other existing implementations (when possible), so a good amount of your time should be spent on that reading.</p>
+
+<p>What to look for in papers: When implementing an algorithm based on a paper, scour that paper, especially the ablation analyses and supplementary material (where available). The ablations will give you an intuition for what parameters or subroutines have the biggest impact on getting things to work, which will help you diagnose bugs. Supplementary material will often give information about specific details like network architecture and optimization hyperparameters, and you should try to align your implementation to these details to improve your chances of getting it working.</p>
+
+<p>But don’t overfit to paper details. Sometimes, the paper prescribes the use of more tricks than are strictly necessary, so be a bit wary of this, and try out simplifications where possible. For example, the original DDPG paper suggests a complex neural network architecture and initialization scheme, as well as batch normalization. These aren’t strictly necessary, and some of the best-reported results for DDPG use simpler networks. As another example, the original A3C paper uses asynchronous updates from the various actor-learners, but it turns out that synchronous updates work about as well.</p>
+
+<p>Don’t overfit to existing implementations either. Study existing implementations for inspiration, but be careful not to overfit to the engineering details of those implementations. RL libraries frequently make choices for abstraction that are good for code reuse between algorithms, but which are unnecessary if you’re only writing a single algorithm or supporting a single use case.</p>
+
+<p>Iterate fast in simple environments. To debug your implementations, try them with simple environments where learning should happen quickly, like CartPole-v0, InvertedPendulum-v0, FrozenLake-v0, and HalfCheetah-v2 (with a short time horizon—only 100 or 250 steps instead of the full 1000) from the OpenAI Gym. Don’t try to run an algorithm in Atari or a complex Humanoid environment if you haven’t first verified that it works on the simplest possible toy task. Your ideal experiment turnaround-time at the debug stage is &lt;5 minutes (on your local machine) or slightly longer but not much. These small-scale experiments don’t require any special hardware, and can be run without too much trouble on CPUs.</p>
+
+<p>If it doesn’t work, assume there’s a bug. Spend a lot of effort searching for bugs before you resort to tweaking hyperparameters: usually it’s a bug. Bad hyperparameters can significantly degrade RL performance, but if you’re using hyperparameters similar to the ones in papers and standard implementations, those will probably not be the issue. Also worth keeping in mind: sometimes things will work in one environment even when you have a breaking bug, so make sure to test in more than one environment once your results look promising.</p>
+
+<p>Measure everything. Do a lot of instrumenting to see what’s going on under-the-hood. The more stats about the learning process you read out at each iteration, the easier it is to debug—after all, you can’t tell it’s broken if you can’t see that it’s breaking. I personally like to look at the mean/std/min/max for cumulative rewards, episode lengths, and value function estimates, along with the losses for the objectives, and the details of any exploration parameters (like mean entropy for stochastic policy optimization, or current epsilon for epsilon-greedy as in DQN). Also, watch videos of your agent’s performance every now and then; this will give you some insights you wouldn’t get otherwise.</p>
+
+<p>Scale experiments when things work. After you have an implementation of an RL algorithm that seems to work correctly in the simplest environments, test it out on harder environments. Experiments at this stage will take longer—on the order of somewhere between a few hours and a couple of days, depending. Specialized hardware—like a beefy GPU or a 32-core machine—might be useful at this point, and you should consider looking into cloud computing resources like AWS or GCE.</p>
+
+<p>Keep these habits! These habits are worth keeping beyond the stage where you’re just learning about deep RL—they will accelerate your research!</p>
+
+<h4 id="toc_49">3 Doing Rigorous Research in RL</h4>
+
+<p>Now you’ve come up with an idea, and you’re fairly certain it hasn’t been done. You use the skills you’ve developed to implement it and you start testing it out on standard domains. It looks like it works! But what does that mean, and how well does it have to work to be important? This is one of the hardest parts of research in deep RL. In order to validate that your proposal is a meaningful contribution, you have to rigorously prove that it actually gets a performance benefit over the strongest possible baseline algorithm—whatever currently achieves SOTA (state of the art) on your test domains. If you’ve invented a new test domain, so there’s no previous SOTA, you still need to try out whatever the most reliable algorithm in the literature is that could plausibly do well in the new test domain, and then you have to beat that.</p>
+
+<p>Set up fair comparisons. If you implement your baseline from scratch—as opposed to comparing against another paper’s numbers directly—it’s important to spend as much time tuning your baseline as you spend tuning your own algorithm. This will make sure that comparisons are fair. Also, do your best to hold “all else equal” even if there are substantial differences between your algorithm and the baseline. For example, if you’re investigating architecture variants, keep the number of model parameters approximately equal between your model and the baseline. Under no circumstances handicap the baseline! It turns out that the baselines in RL are pretty strong, and getting big, consistent wins over them can be tricky or require some good insight in algorithm design.</p>
+
+<p>Remove stochasticity as a confounder. Beware of random seeds making things look stronger or weaker than they really are, so run everything for many random seeds (at least 3, but if you want to be thorough, do 10 or more). This is really important and deserves a lot of emphasis: deep RL seems fairly brittle with respect to random seed in a lot of common use cases. There’s potentially enough variance that two different groups of random seeds can yield learning curves with differences so significant that they look like they don’t come from the same distribution at all (see figure 10 here).</p>
+
+<p>Run high-integrity experiments. Don’t just take the results from the best or most interesting runs to use in your paper. Instead, launch new, final experiments—for all of the methods that you intend to compare (if you are comparing against your own baseline implementations)—and precommit to report on whatever comes out of that. This is to enforce a weak form of preregistration: you use the tuning stage to come up with your hypotheses, and you use the final runs to come up with your conclusions.</p>
+
+<p>Check each claim separately. Another critical aspect of doing research is to run an ablation analysis. Any method you propose is likely to have several key design decisions—like architecture choices or regularization techniques, for instance—each of which could separately impact performance. The claim you’ll make in your work is that those design decisions collectively help, but this is really a bundle of several claims in disguise: one for each such design element. By systematically evaluating what would happen if you were to swap them out with alternate design choices, or remove them entirely, you can figure out how to correctly attribute credit for the benefits your method confers. This lets you make each separate claim with a measure of confidence, and increases the overall strength of your work.</p>
+
+<p>Closing Thoughts<br/>
+Deep RL is an exciting, fast-moving field, and we need as many people as possible to go through the open problems and make progress on them. Hopefully, you feel a bit more prepared to be a part of it after reading this! And whenever you’re ready, let us know.</p>
+
 </div></body>
 
 </html>
