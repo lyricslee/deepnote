@@ -1,14 +1,17 @@
-### 深度强化学习笔记(Deep Reinforcement Learning)
+### 1.深度强化学习笔记(Deep Reinforcement Learning)
 - [0. RL 强化学习入门](ALL_IntroRL.html)
 - [1. DQN all in one](ALL_DQN.html)
 - [2. PG 策略梯度 all in on](ALL_PG.html)
 - [3. DDPG all in one](ALL_DDPG.html)
 
-### 多伦多大学自动驾驶课程
+### 2.reserch
+- [music 合成方法总结](music_papers.html)
+
+### 3.多伦多大学自动驾驶课程
 - [1. 课程说明](driver_00.html)
 - [2. 第一部分：自动驾驶基础知识](driver_01_introduce.html)
 
-### 算法列表
+### A: 强化学习算法列表
 分类 | 名称 | 说明
 ---|---|---
 DQN | DQN | 记忆池+固定目标网络
