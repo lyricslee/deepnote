@@ -6,6 +6,7 @@
 
 ### 2.reserch
 - [music 合成方法总结](music_papers.html)
+- [lyrics generation 歌词生成方法总结](03 lyrics_generation.html)
 
 ### 3.多伦多大学自动驾驶课程
 - [1. 课程说明](driver_00.html)

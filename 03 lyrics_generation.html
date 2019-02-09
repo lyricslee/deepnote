@@ -2,7 +2,7 @@
 
 <head>
 <meta charset="utf-8">
-<title>index</title>
+<title>03 lyrics_generation</title>
 <style>
 html,body{ font-family: "SF UI Display", ".PingFang SC","PingFang SC", "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Microsoft YaHei", "Microsoft JhengHei", "Helvetica Neue", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
   font-size: 16px;
@@ -261,138 +261,61 @@ pre[class*="language-"].line-numbers > code {
 </style>
 
 <style> @media print{ code[class*="language-"],pre[class*="language-"]{overflow: visible; word-wrap: break-word !important;} }</style></head><body><div class="markdown-body">
-<h3 id="toc_0">1.深度强化学习笔记(Deep Reinforcement Learning)</h3>
+<h3 id="toc_0">1. lyrics dataset</h3>
 
 <ul>
-<li><a href="ALL_IntroRL.html">0. RL 强化学习入门</a></li>
-<li><a href="ALL_DQN.html">1. DQN all in one</a></li>
-<li><a href="ALL_PG.html">2. PG 策略梯度 all in on</a></li>
-<li><a href="ALL_DDPG.html">3. DDPG all in one</a></li>
+<li><p><a href="https://www.kaggle.com/mousehead/songlyrics">Lyrics for 55000+ songs in English from LyricsFreak</a></p></li>
+<li><p><a href="https://www.kaggle.com/gyani95/380000-lyrics-from-metrolyrics">380,000+ lyrics from MetroLyrics</a></p></li>
+<li><p><a href="https://www.kaggle.com/paultimothymooney/poetry">Song Lyrics Poetry and Lyrics (TXT files)</a></p></li>
+<li><p><a href="https://www.kaggle.com/rakannimer/billboard-lyrics">Billboard 1964-2015 Songs + Lyrics 50 years of pop music lyrics</a></p></li>
+<li><p><a href="https://labrosa.ee.columbia.edu/millionsong/musixmatch">The musiXmatch Dataset 240,000 songs lyrical</a></p></li>
+<li><p><a href="https://www.smcnus.org/lyrics/">LyricFind Corpus</a></p></li>
+<li><p><a href="https://www.kaggle.com/PromptCloudHQ/taylor-swift-song-lyrics-from-all-the-albums">Taylor Swift Song Lyrics from all the albums</a></p></li>
 </ul>
 
-<h3 id="toc_1">2.reserch</h3>
+<h3 id="toc_1">2. papers</h3>
+
+<h4 id="toc_2">2018 Generating lyrics with variational autoencoder and multi-modal artist embeddings</h4>
 
 <ul>
-<li><a href="music_papers.html">music 合成方法总结</a></li>
-<li><a href="03%20lyrics_generation.html">lyrics generation 歌词生成方法总结</a></li>
+<li>CNN with MEL(maximum expectation likelihood) spectrograms</li>
 </ul>
 
-<h3 id="toc_2">3.多伦多大学自动驾驶课程</h3>
+<h4 id="toc_3">2016  Algorithmic Songwriting with ALYSIA</h4>
 
 <ul>
-<li><a href="driver_00.html">1. 课程说明</a></li>
-<li><a href="driver_01_introduce.html">2. 第一部分：自动驾驶基础知识</a></li>
+<li>Random Forests<br/></li>
 </ul>
 
-<h3 id="toc_3">A: 强化学习算法列表</h3>
+<h4 id="toc_4">2016 DopeLearning: A Computational Approach to Rap Lyrics Generation</h4>
 
-<table>
-<thead>
-<tr>
-<th>分类</th>
-<th>名称</th>
-<th>说明</th>
-</tr>
-</thead>
+<ul>
+<li>RankSVM algorithm and a deep neural network model with a novel structure</li>
+</ul>
 
-<tbody>
-<tr>
-<td>DQN</td>
-<td>DQN</td>
-<td>记忆池+固定目标网络</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Double DQN</td>
-<td>将动作选择和价值估计分开，避免价值过高估计</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Dueling DQN</td>
-<td>将Q值分解为状态价值和优势函数，得到更多有用信息</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Prioritized Replay Buffer</td>
-<td>将经验池中的经验按照优先级进行采样</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Multi-Step Learnin</td>
-<td>多步执行使得目标价值估计更为准确</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Distributional DQN(Categorical DQN)</td>
-<td>得到价值分布</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>NoisyNet</td>
-<td>增强模型的探索能力</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Rainbow: all in one</td>
-<td>六种方法进行了一个整合</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Deep Recurrent Q-Learning for Partially Observable MDPs</td>
-<td>DQN 和 LSTM 的结合</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>TNPG</td>
-<td>共轭梯度法 求解自然策略梯度 (NPG)</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>ACKTR</td>
-<td>完全正交的Kronecker-factor技术 求解自然策略梯度 (NPG)</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>TRPO</td>
-<td>相比TNPG，TRPO由于有了一个检验手段和线搜索，能承受更大的步长。</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>PPO-clip</td>
-<td>对优势的估计进行一个截断，限制了新策略空间的范围。</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>GAE</td>
-<td>discounted rewards to estimate the advantage</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>Actor-Critic</td>
-<td>结合了 Policy Gradient (Actor) 和 Function Approximation (Critic) 的方法</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>A3C</td>
-<td>A3C （基于 actor-critic）算法是并行算法，可以有效的利用多核。</td>
-</tr>
-<tr>
-<td>DDPG</td>
-<td>DDPG</td>
-<td>连续空间 Actor-Critic + DQN 的结合</td>
-</tr>
-<tr>
-<td>DDPG</td>
-<td>TD3</td>
-<td>改善 DDPG Q 值 overestimate 导致 policy 在错误的 Q 值 errors 上 exploit 的问题</td>
-</tr>
-<tr>
-<td>DDPG</td>
-<td>SAC</td>
-<td>entropy regularization(exploration-exploitation trade-off)</td>
-</tr>
-</tbody>
-</table>
+<h4 id="toc_5">2016 Chinese Song Iambics Generation with Neural Attention-Based Model</h4>
+
+<ul>
+<li>attention-based LSTM</li>
+</ul>
+
+<h4 id="toc_6">2015 GhostWriter: Using an LSTM for Automatic Rap Lyric Generation</h4>
+
+<ul>
+<li>LSTM<br/></li>
+</ul>
+
+<h4 id="toc_7">2014 Modeling Structural Topic Transitions for Automatic Lyrics Generation</h4>
+
+<ul>
+<li>Hidden Markov Model (HMM)<br/></li>
+</ul>
+
+<h4 id="toc_8">2011  Generating Text with Recurrent Neural Networks</h4>
+
+<ul>
+<li>RNN trained with the new Hessian-Free optimizer (HF)</li>
+</ul>
 
 </div></body>
 
