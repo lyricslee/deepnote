@@ -12,6 +12,10 @@
 - [1. 课程说明](driver_00.html)
 - [2. 第一部分：自动驾驶基础知识](driver_01_introduce.html)
 
+### 4.Deep Learning
+- [1. TCN seq-to-seq model](04_TCN.html)
+
+
 ### A: 强化学习算法列表
 分类 | 名称 | 说明
 ---|---|---
