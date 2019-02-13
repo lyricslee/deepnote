@@ -2,7 +2,7 @@
 
 <head>
 <meta charset="utf-8">
-<title>index</title>
+<title>03_KL_cross_entroy</title>
 <style>
 html,body{ font-family: "SF UI Display", ".PingFang SC","PingFang SC", "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Microsoft YaHei", "Microsoft JhengHei", "Helvetica Neue", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
   font-size: 16px;
@@ -259,152 +259,43 @@ pre[class*="language-"].line-numbers > code {
 
 
 </style>
-
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({TeX: { equationNumbers: { autoNumber: "AMS" } }});</script>
 <style> @media print{ code[class*="language-"],pre[class*="language-"]{overflow: visible; word-wrap: break-word !important;} }</style></head><body><div class="markdown-body">
-<h3 id="toc_0">1.深度强化学习笔记(Deep Reinforcement Learning)</h3>
+<h3 id="toc_0">KL 散度</h3>
 
-<ul>
-<li><a href="ALL_IntroRL.html">0. RL 强化学习入门</a></li>
-<li><a href="ALL_DQN.html">1. DQN all in one</a></li>
-<li><a href="ALL_PG.html">2. PG 策略梯度 all in on</a></li>
-<li><a href="ALL_DDPG.html">3. DDPG all in one</a></li>
-</ul>
+<p>信息熵完美编码，<br/>
+交叉熵不完美编码，<br/>
+相对熵是两者的差值，交叉熵减去信息熵。差值即差异，也即KL散度。</p>
 
-<h3 id="toc_1">2.reserch</h3>
+<p>KL散度是两个概率分布P和Q差别的非对称性的度量。 KL散度是用来 度量使用基于Q的编码来编码来自P的样本平均所需的额外的位元数。 典型情况下，P表示数据的真实分布，Q表示数据的理论分布，模型分布，或P的近似分布。</p>
 
-<ul>
-<li><a href="music_papers.html">music 合成方法总结</a></li>
-<li><a href="03%20lyrics_generation.html">lyrics generation 歌词生成方法总结</a></li>
-</ul>
+<p>. 概念</p>
 
-<h3 id="toc_2">3.多伦多大学自动驾驶课程</h3>
+<p>考虑某个未知的分布 p(x)，假定用一个近似的分布 q(x) 对它进行建模。如果我们使用 q(x) 来建立一个编码体系，用来把 x 的值传给接收者，那么由于我们使用了q(x)而不是真实分布p(x)，平均编码长度比用真实分布p(x)进行编码增加的信息量(单位是 nat )为：</p>
 
-<ul>
-<li><a href="driver_00.html">1. 课程说明</a></li>
-<li><a href="driver_01_introduce.html">2. 第一部分：自动驾驶基础知识</a></li>
-</ul>
+<p>\(\begin{aligned} KL (p || q) &amp;= - \int p(x) \ln q(x) d x - (-\int p(x) \ln p(x) dx) \\ &amp;= - \int p(x) \ln [\frac{q(x)}{p(x)}] dx \end{aligned} (1)\)</p>
 
-<h3 id="toc_3">4.Deep Learning</h3>
+<p>这被称为分布p(x)和分布q(x)之间的相对熵(relative entropy)或者KL散 度( Kullback-Leibler divergence )。</p>
 
-<ul>
-<li><a href="04_TCN.html">1. TCN seq-to-seq model</a></li>
-</ul>
+<p>也就是说，当我们知道真实的概率分布之后，可以给出最有效的编码。如果我们使用了不同于真实分布的概率分布，那么我们一定会损失编码效率，并且在传输时增加的平均额外信息量至少等于两个分布之间的KL散度。</p>
 
-<h3 id="toc_4">5.Machine Learning</h3>
+<p>注意，这不是一个对称量，即 \(  KL (p || q) \neq KL (q || p) \)。</p>
 
-<ul>
-<li><a href="03_KL_cross_entroy.html">1. KL cross_entry</a></li>
-</ul>
+<h4 id="toc_1">3. 最小化 Kullback-Leibler 散度等价于最大化似然函数</h4>
 
-<h3 id="toc_5">A: 强化学习算法列表</h3>
+<p>假设我们想要对未知分布p(x) 建模，可以试着使用一些参数分布 \(q(x|\theta) \) 来近似p(x)。 \(q(x|\theta)\) 由可调节的参数  \(\theta\) 控制(例如一个多元高斯分布)。</p>
 
-<table>
-<thead>
-<tr>
-<th>分类</th>
-<th>名称</th>
-<th>说明</th>
-</tr>
-</thead>
+<p>通过最小化 \(p(x) 和 q(x|\theta) \)之间关于 \(\theta \) 的 KL散度可以确定\( \theta \)。</p>
 
-<tbody>
-<tr>
-<td>DQN</td>
-<td>DQN</td>
-<td>记忆池+固定目标网络</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Double DQN</td>
-<td>将动作选择和价值估计分开，避免价值过高估计</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Dueling DQN</td>
-<td>将Q值分解为状态价值和优势函数，得到更多有用信息</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Prioritized Replay Buffer</td>
-<td>将经验池中的经验按照优先级进行采样</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Multi-Step Learnin</td>
-<td>多步执行使得目标价值估计更为准确</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Distributional DQN(Categorical DQN)</td>
-<td>得到价值分布</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>NoisyNet</td>
-<td>增强模型的探索能力</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Rainbow: all in one</td>
-<td>六种方法进行了一个整合</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Deep Recurrent Q-Learning for Partially Observable MDPs</td>
-<td>DQN 和 LSTM 的结合</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>TNPG</td>
-<td>共轭梯度法 求解自然策略梯度 (NPG)</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>ACKTR</td>
-<td>完全正交的Kronecker-factor技术 求解自然策略梯度 (NPG)</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>TRPO</td>
-<td>相比TNPG，TRPO由于有了一个检验手段和线搜索，能承受更大的步长。</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>PPO-clip</td>
-<td>对优势的估计进行一个截断，限制了新策略空间的范围。</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>GAE</td>
-<td>discounted rewards to estimate the advantage</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>Actor-Critic</td>
-<td>结合了 Policy Gradient (Actor) 和 Function Approximation (Critic) 的方法</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>A3C</td>
-<td>A3C （基于 actor-critic）算法是并行算法，可以有效的利用多核。</td>
-</tr>
-<tr>
-<td>DDPG</td>
-<td>DDPG</td>
-<td>连续空间 Actor-Critic + DQN 的结合</td>
-</tr>
-<tr>
-<td>DDPG</td>
-<td>TD3</td>
-<td>改善 DDPG Q 值 overestimate 导致 policy 在错误的 Q 值 errors 上 exploit 的问题</td>
-</tr>
-<tr>
-<td>DDPG</td>
-<td>SAC</td>
-<td>entropy regularization(exploration-exploitation trade-off)</td>
-</tr>
-</tbody>
-</table>
+<p>但是因为不知道 p(x)，所以不能直接这么做。</p>
+
+<p>如果已经观察到了服从分布 p(x) 的有限数量的训练点集\( \{x_n\} ，其中 n = 1,\dots, N\) ，那么关于 p(x) 的期望就可以通过这些点的有限加和，使用公式 \(\displaystyle E(f) \simeq \frac{1}{N} \sum_{N=1}^N f(x_n)\) 来近似，即：</p>
+
+<p>\(KL (p || q) \simeq \frac{1}{N}\sum_{n=1}^N[-\ln q( x_n \mid \theta)+ \ln p( x_n)] (4)\)</p>
+
+<p>公式(4)右侧的第二项与 \( \theta \)无关，第一项是使用训练集估计的分布  \(q(x | \theta) \)下的 \( \theta\) 的负对数似然函数。</p>
+
+<p>因此最小化KL散度等价于最大化似然函数。</p>
 
 </div></body>
 

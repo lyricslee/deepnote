@@ -15,6 +15,9 @@
 ### 4.Deep Learning
 - [1. TCN seq-to-seq model](04_TCN.html)
 
+### 5.Machine Learning
+- [1. KL cross_entry](03_KL_cross_entroy.html)
+
 
 ### A: 强化学习算法列表
 分类 | 名称 | 说明
