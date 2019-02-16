@@ -18,7 +18,10 @@
 ### 5.Machine Learning
 - [1. KL cross_entry](03_KL_cross_entroy.html)
 - [2. UnsupervisedLearning K-mean](unsupervised_learning.html)
-
+- [3. Regression_PCA_PCR](MLRegressionPCAPCR.html)
+- [4. kernel _trick](kernel _trick.html)
+- [5. Deep Learning](DeepLearning.html)
+- [6. Decision Tree](DecisionTree.html)
 
 ### A: 强化学习算法列表
 分类 | 名称 | 说明
