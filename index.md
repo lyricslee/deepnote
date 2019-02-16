@@ -22,6 +22,7 @@
 - [4. kernel _trick](kernel _trick.html)
 - [5. Deep Learning](DeepLearning.html)
 - [6. Decision Tree](DecisionTree.html)
+- [7. PLA: Perceptrons Learning Alogrithm](PLA.html)
 
 ### A: 强化学习算法列表
 分类 | 名称 | 说明
