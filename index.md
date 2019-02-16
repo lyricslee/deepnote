@@ -1,4 +1,4 @@
-### 1.深度强化学习笔记(Deep Reinforcement Learning)
+### 1. 深度强化学习笔记(Deep Reinforcement Learning)
 - [0. RL 资料整理](00_RL_course.html)
 - [1. RL 强化学习入门](ALL_IntroRL.html)
 - [2. DQN all in one](ALL_DQN.html)
@@ -11,19 +11,19 @@
 - [3. UCB_11 Model-Based RL](06_UCB_11.html)
 - [4. UCB_16  Inverse Reinforcement Learning](07_UCB_16.html)
 
-### 2.reserch
+### 2. reserch
 - [music 合成方法总结](music_papers.html)
 - [lyrics generation 歌词生成方法总结](03 lyrics_generation.html)
 
-### 3.多伦多大学自动驾驶课程
+### 3. 多伦多大学自动驾驶课程
 - [1. 课程说明](driver_00.html)
 - [2. 第一部分：自动驾驶基础知识](driver_01_introduce.html)
 
-### 4.Deep Learning
+### 4. Deep Learning
 - [1. TCN seq-to-seq model](04_TCN.html)
 - [2. tensorflow introduce](02_tensorflow.html)
 
-### 5.Machine Learning
+### 5. Machine Learning
 - [1. KL cross_entry](03_KL_cross_entroy.html)
 - [2. UnsupervisedLearning K-mean](unsupervised_learning.html)
 - [3. Regression_PCA_PCR](MLRegressionPCAPCR.html)
@@ -31,6 +31,9 @@
 - [5. Deep Learning](DeepLearning.html)
 - [6. Decision Tree](DecisionTree.html)
 - [7. PLA: Perceptrons Learning Alogrithm](PLA.html)
+
+### 6. Autonomous System
+- [1. BFS_DFS_Heuristics](08_BFS_DFS_Search.html)
 
 ### A: 强化学习算法列表
 分类 | 名称 | 说明
