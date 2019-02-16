@@ -17,6 +17,7 @@
 
 ### 5.Machine Learning
 - [1. KL cross_entry](03_KL_cross_entroy.html)
+- [2. UnsupervisedLearning K-mean](unsupervised_learning.html)
 
 
 ### A: 强化学习算法列表
