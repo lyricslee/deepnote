@@ -1,8 +1,15 @@
 ### 1.深度强化学习笔记(Deep Reinforcement Learning)
-- [0. RL 强化学习入门](ALL_IntroRL.html)
-- [1. DQN all in one](ALL_DQN.html)
-- [2. PG 策略梯度 all in on](ALL_PG.html)
-- [3. DDPG all in one](ALL_DDPG.html)
+- [0. RL 资料整理](00_RL_course.html)
+- [1. RL 强化学习入门](ALL_IntroRL.html)
+- [2. DQN all in one](ALL_DQN.html)
+- [3. PG all in on](ALL_PG.html)
+- [4. DDPG all in one](ALL_DDPG.html)
+
+#### 1.1 UCB RL note
+- [1. UCB_1-6 Policy Gradient](04_UCB_1-6.html)
+- [2. UCB_7-10 Q-learning & Advanced PG](05_UCB_7-10.html)
+- [3. UCB_11 Model-Based RL](06_UCB_11.html)
+- [4. UCB_16  Inverse Reinforcement Learning](07_UCB_16.html)
 
 ### 2.reserch
 - [music 合成方法总结](music_papers.html)
@@ -14,6 +21,7 @@
 
 ### 4.Deep Learning
 - [1. TCN seq-to-seq model](04_TCN.html)
+- [2. tensorflow introduce](02_tensorflow.html)
 
 ### 5.Machine Learning
 - [1. KL cross_entry](03_KL_cross_entroy.html)
