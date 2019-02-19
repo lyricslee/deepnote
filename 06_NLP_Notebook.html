@@ -2,7 +2,7 @@
 
 <head>
 <meta charset="utf-8">
-<title>index</title>
+<title>06_NLP_Notebook</title>
 <style>
 html,body{ font-family: "SF UI Display", ".PingFang SC","PingFang SC", "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Microsoft YaHei", "Microsoft JhengHei", "Helvetica Neue", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
   font-size: 16px;
@@ -261,174 +261,64 @@ pre[class*="language-"].line-numbers > code {
 </style>
 
 <style> @media print{ code[class*="language-"],pre[class*="language-"]{overflow: visible; word-wrap: break-word !important;} }</style></head><body><div class="markdown-body">
-<h3 id="toc_0">1. 深度强化学习笔记(Deep Reinforcement Learning)</h3>
+<h3 id="toc_0">自然语言处理笔记</h3>
+
+<h3 id="toc_1">1. Introduce</h3>
+
+<h4 id="toc_2">1.1 基于对话系统的自然语言处理系统组成</h4>
+
+<ol>
+<li>ASR(automat speech recognition): from speech audio to text</li>
+<li>syntactic parsing</li>
+<li>semantic analysis</li>
+<li>dialogue management</li>
+<li>natural language generation: from semantic str to text</li>
+<li>speech synthesis(TTS): from text to speech</li>
+</ol>
+
+<p>或者是</p>
+
+<ol>
+<li>speech to text</li>
+<li>understand text</li>
+<li>dialog management</li>
+<li>generation text</li>
+<li>text to speech</li>
+</ol>
+
+<h3 id="toc_3">2. NLP understanding</h3>
+
+<h4 id="toc_4">2.1 Part of speech tags 词性标注</h4>
 
 <ul>
-<li><a href="00_RL_course.html">0. RL 资料整理</a></li>
-<li><a href="ALL_IntroRL.html">1. RL 强化学习入门</a></li>
-<li><a href="ALL_DQN.html">2. DQN all in one</a></li>
-<li><a href="ALL_PG.html">3. PG all in on</a></li>
-<li><a href="ALL_DDPG.html">4. DDPG all in one</a></li>
+<li><a href="http://www.shuang0420.com/2017/02/24/NLP%20%E7%AC%94%E8%AE%B0%20-%20Part%20of%20speech%20tags/">http://www.shuang0420.com/2017/02/24/NLP%20%E7%AC%94%E8%AE%B0%20-%20Part%20of%20speech%20tags/</a></li>
+<li><p><a href="https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html">https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html</a></p></li>
+<li><p>adj adv  verb det  noun conjunctions: and or pronouns: to with prep: to with</p></li>
 </ul>
 
-<h4 id="toc_1">1.1 UCB RL note(知乎谢天)</h4>
+<h4 id="toc_5">2.2 POS tags 词性标注算法</h4>
+
+<ol>
+<li>基于规则的标注(rule-based tagging)</li>
+<li>随机标注(stochastic tagging) : HMM </li>
+<li>基于转换的标注(transformation-based tagging): 规则+机器学习</li>
+</ol>
+
+<h4 id="toc_6">2.3 Dependency Parse</h4>
+
+<ol>
+<li>Dynamic Programming: Treat dependencies as constituents</li>
+<li>Constraint Satisfaction: Use a constraint-based dependency grammar(Eisner’s proposal)</li>
+<li>Deterministic parsing: Derive from a given sentence a single syntactic tree</li>
+</ol>
+
+<h4 id="toc_7">2.4 Transition-based parsing &lt;- Deterministic dependency parsing</h4>
 
 <ul>
-<li><a href="04_UCB_1-6.html">1. UCB_1-6 Policy Gradient</a></li>
-<li><a href="05_UCB_7-10.html">2. UCB_7-10 Q-learning &amp; Advanced PG</a></li>
-<li><a href="06_UCB_11.html">3. UCB_11 Model-Based RL</a></li>
-<li><a href="07_UCB_16.html">4. UCB_16  Inverse Reinforcement Learning</a></li>
+<li>Data Structures: Stack and Queue</li>
+<li>Four Actions: Shift, Reduce, Left-arc, Right-arc</li>
+<li>Learning methods: SVMs, Neural Networks</li>
 </ul>
-
-<h3 id="toc_2">2. reserch</h3>
-
-<ul>
-<li><a href="music_papers.html">music 合成方法总结</a></li>
-<li><a href="03%20lyrics_generation.html">lyrics generation 歌词生成方法总结</a></li>
-</ul>
-
-<h3 id="toc_3">3. 多伦多大学自动驾驶课程</h3>
-
-<ul>
-<li><a href="driver_00.html">1. 课程说明</a></li>
-<li><a href="driver_01_introduce.html">2. 第一部分：自动驾驶基础知识</a></li>
-</ul>
-
-<h3 id="toc_4">4. Deep Learning</h3>
-
-<ul>
-<li><a href="04_TCN.html">1. TCN seq-to-seq model</a></li>
-<li><a href="02_tensorflow.html">2. tensorflow introduce</a></li>
-<li><a href="06_NLP_Notebook.html">3. NLP 课程笔记</a></li>
-</ul>
-
-<h3 id="toc_5">5. Machine Learning</h3>
-
-<ul>
-<li><a href="03_KL_cross_entroy.html">1. KL cross_entry</a></li>
-<li><a href="unsupervised_learning.html">2. UnsupervisedLearning K-mean</a></li>
-<li><a href="MLRegressionPCAPCR.html">3. Regression_PCA_PCR</a></li>
-<li><a href="kernel%20_trick.html">4. kernel _trick</a></li>
-<li><a href="DeepLearning.html">5. Deep Learning</a></li>
-<li><a href="DecisionTree.html">6. Decision Tree</a></li>
-<li><a href="PLA.html">7. PLA: Perceptrons Learning Alogrithm</a></li>
-</ul>
-
-<h3 id="toc_6">6. Autonomous System</h3>
-
-<ul>
-<li><a href="08_BFS_DFS_Search.html">1. BFS_DFS_Heuristics</a></li>
-</ul>
-
-<h3 id="toc_7">A: 强化学习算法列表</h3>
-
-<table>
-<thead>
-<tr>
-<th>分类</th>
-<th>名称</th>
-<th>说明</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>DQN</td>
-<td>DQN</td>
-<td>记忆池+固定目标网络</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Double DQN</td>
-<td>将动作选择和价值估计分开，避免价值过高估计</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Dueling DQN</td>
-<td>将Q值分解为状态价值和优势函数，得到更多有用信息</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Prioritized Replay Buffer</td>
-<td>将经验池中的经验按照优先级进行采样</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Multi-Step Learnin</td>
-<td>多步执行使得目标价值估计更为准确</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Distributional DQN(Categorical DQN)</td>
-<td>得到价值分布</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>NoisyNet</td>
-<td>增强模型的探索能力</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Rainbow: all in one</td>
-<td>六种方法进行了一个整合</td>
-</tr>
-<tr>
-<td>DQN</td>
-<td>Deep Recurrent Q-Learning for Partially Observable MDPs</td>
-<td>DQN 和 LSTM 的结合</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>TNPG</td>
-<td>共轭梯度法 求解自然策略梯度 (NPG)</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>ACKTR</td>
-<td>完全正交的Kronecker-factor技术 求解自然策略梯度 (NPG)</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>TRPO</td>
-<td>相比TNPG，TRPO由于有了一个检验手段和线搜索，能承受更大的步长。</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>PPO-clip</td>
-<td>对优势的估计进行一个截断，限制了新策略空间的范围。</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>GAE</td>
-<td>discounted rewards to estimate the advantage</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>Actor-Critic</td>
-<td>结合了 Policy Gradient (Actor) 和 Function Approximation (Critic) 的方法</td>
-</tr>
-<tr>
-<td>PG</td>
-<td>A3C</td>
-<td>A3C （基于 actor-critic）算法是并行算法，可以有效的利用多核。</td>
-</tr>
-<tr>
-<td>DDPG</td>
-<td>DDPG</td>
-<td>连续空间 Actor-Critic + DQN 的结合</td>
-</tr>
-<tr>
-<td>DDPG</td>
-<td>TD3</td>
-<td>改善 DDPG Q 值 overestimate 导致 policy 在错误的 Q 值 errors 上 exploit 的问题</td>
-</tr>
-<tr>
-<td>DDPG</td>
-<td>SAC</td>
-<td>entropy regularization(exploration-exploitation trade-off)</td>
-</tr>
-</tbody>
-</table>
 
 </div></body>
 
