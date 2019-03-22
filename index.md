@@ -35,6 +35,7 @@
 
 ### 6. Autonomous System
 - [1. BFS_DFS_Heuristics](08_BFS_DFS_Search.html)
+- [2. Policy iteration And Value iteration](09_PI_VI.html)
 
 ### A: 强化学习算法列表
 分类 | 名称 | 说明
