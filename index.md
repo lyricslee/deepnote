@@ -15,12 +15,12 @@
 - [linux shell](linux/01_linux_cmd.html)
 
 ### 3. reserch
-- [music 合成方法总结](music_papers.html)
-- [lyrics generation 歌词生成方法总结](03 lyrics_generation.html)
+- [music 合成方法总结](paper/music_papers.html)
+- [lyrics generation 歌词生成方法总结](paper/03 lyrics_generation.html)
 
 ### 4. 多伦多大学自动驾驶课程
-- [1. 课程说明](driver_00.html)
-- [2. 第一部分：自动驾驶基础知识](driver_01_introduce.html)
+- [1. 课程说明](paper/driver_00.html)
+- [2. 第一部分：自动驾驶基础知识](paper/driver_01_introduce.html)
 
 ### 5. Deep Learning
 - [1. TCN seq-to-seq model](ml/04_TCN.html)
