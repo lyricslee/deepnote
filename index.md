@@ -1,41 +1,44 @@
 ### 1. 深度强化学习笔记(Deep Reinforcement Learning)
-- [0. RL 资料整理](00_RL_course.html)
-- [1. RL 强化学习入门](ALL_IntroRL.html)
-- [2. DQN all in one](ALL_DQN.html)
-- [3. PG all in on](ALL_PG.html)
-- [4. DDPG all in one](ALL_DDPG.html)
+- [0. RL 资料整理](rl/00_RL_course.html)
+- [1. RL 强化学习入门](rl/ALL_IntroRL.html)
+- [2. DQN all in one](rl/ALL_DQN.html)
+- [3. PG all in on](rl/ALL_PG.html)
+- [4. DDPG all in one](rl/ALL_DDPG.html)
 
 #### 1.1 UCB RL note(知乎谢天)
-- [1. UCB_1-6 Policy Gradient](04_UCB_1-6.html)
-- [2. UCB_7-10 Q-learning & Advanced PG](05_UCB_7-10.html)
-- [3. UCB_11 Model-Based RL](06_UCB_11.html)
-- [4. UCB_16  Inverse Reinforcement Learning](07_UCB_16.html)
+- [1. UCB_1-6 Policy Gradient](rl/04_UCB_1-6.html)
+- [2. UCB_7-10 Q-learning & Advanced PG](rl/05_UCB_7-10.html)
+- [3. UCB_11 Model-Based RL](rl/06_UCB_11.html)
+- [4. UCB_16  Inverse Reinforcement Learning](rl/07_UCB_16.html)
 
-### 2. reserch
+### 2. tools
+- [linux shell](linux/01_linux_cmd.html)
+
+### 3. reserch
 - [music 合成方法总结](music_papers.html)
 - [lyrics generation 歌词生成方法总结](03 lyrics_generation.html)
 
-### 3. 多伦多大学自动驾驶课程
+### 4. 多伦多大学自动驾驶课程
 - [1. 课程说明](driver_00.html)
 - [2. 第一部分：自动驾驶基础知识](driver_01_introduce.html)
 
-### 4. Deep Learning
-- [1. TCN seq-to-seq model](04_TCN.html)
-- [2. tensorflow introduce](02_tensorflow.html)
-- [3. NLP 课程笔记](06_NLP_Notebook.html)
+### 5. Deep Learning
+- [1. TCN seq-to-seq model](ml/04_TCN.html)
+- [2. tensorflow introduce](ml/02_tensorflow.html)
+- [3. NLP 课程笔记](ml/06_NLP_Notebook.html)
 
-### 5. Machine Learning
-- [1. KL cross_entry](03_KL_cross_entroy.html)
-- [2. UnsupervisedLearning K-mean](unsupervised_learning.html)
-- [3. Regression_PCA_PCR](MLRegressionPCAPCR.html)
-- [4. kernel _trick](kernel _trick.html)
-- [5. Deep Learning](DeepLearning.html)
-- [6. Decision Tree](DecisionTree.html)
-- [7. PLA: Perceptrons Learning Alogrithm](PLA.html)
+### 6. Machine Learning
+- [1. KL cross_entry](ml/03_KL_cross_entroy.html)
+- [2. UnsupervisedLearning K-mean](ml/unsupervised_learning.html)
+- [3. Regression_PCA_PCR](ml/MLRegressionPCAPCR.html)
+- [4. kernel _trick](ml/kernel _trick.html)
+- [5. Deep Learning](ml/DeepLearning.html)
+- [6. Decision Tree](ml/DecisionTree.html)
+- [7. PLA: Perceptrons Learning Alogrithm](ml/PLA.html)
 
-### 6. Autonomous System
-- [1. BFS_DFS_Heuristics](08_BFS_DFS_Search.html)
-- [2. Policy iteration And Value iteration](09_PI_VI.html)
+### 7. Autonomous System
+- [1. BFS_DFS_Heuristics](rl/08_BFS_DFS_Search.html)
+- [2. Policy iteration And Value iteration](rl/09_PI_VI.html)
 
 ### A: 强化学习算法列表
 分类 | 名称 | 说明
