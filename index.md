@@ -13,6 +13,7 @@
 
 ### 2. tools
 - [linux shell](linux/01_linux_cmd.html)
+- [python tools](linux/02_python_tools.html)
 
 ### 3. reserch
 - [music 合成方法总结](paper/music_papers.html)
