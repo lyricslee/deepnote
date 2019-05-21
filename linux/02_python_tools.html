@@ -413,7 +413,33 @@ Prism.languages.yaml={scalar:{pattern:/([\-:]\s*(?:![^\s]+)?[ \t]*[|>])[ \t]*(?:
 !function(){if("undefined"!=typeof self&&self.Prism&&self.document){var e="line-numbers",t=/\n(?!$)/g,n=function(e){var n=r(e),s=n["white-space"];if("pre-wrap"===s||"pre-line"===s){var l=e.querySelector("code"),i=e.querySelector(".line-numbers-rows"),a=e.querySelector(".line-numbers-sizer"),o=l.textContent.split(t);a||(a=document.createElement("span"),a.className="line-numbers-sizer",l.appendChild(a)),a.style.display="block",o.forEach(function(e,t){a.textContent=e||"\n";var n=a.getBoundingClientRect().height;i.children[t].style.height=n+"px"}),a.textContent="",a.style.display="none"}},r=function(e){return e?window.getComputedStyle?getComputedStyle(e):e.currentStyle||null:null};window.addEventListener("resize",function(){Array.prototype.forEach.call(document.querySelectorAll("pre."+e),n)}),Prism.hooks.add("complete",function(e){if(e.code){var r=e.element.parentNode,s=/\s*\bline-numbers\b\s*/;if(r&&/pre/i.test(r.nodeName)&&(s.test(r.className)||s.test(e.element.className))&&!e.element.querySelector(".line-numbers-rows")){s.test(e.element.className)&&(e.element.className=e.element.className.replace(s," ")),s.test(r.className)||(r.className+=" line-numbers");var l,i=e.code.match(t),a=i?i.length+1:1,o=new Array(a+1);o=o.join("<span></span>"),l=document.createElement("span"),l.setAttribute("aria-hidden","true"),l.className="line-numbers-rows",l.innerHTML=o,r.hasAttribute("data-start")&&(r.style.counterReset="linenumber "+(parseInt(r.getAttribute("data-start"),10)-1)),e.element.appendChild(l),n(r),Prism.hooks.run("line-numbers",e)}}}),Prism.hooks.add("line-numbers",function(e){e.plugins=e.plugins||{},e.plugins.lineNumbers=!0}),Prism.plugins.lineNumbers={getLine:function(t,n){if("PRE"===t.tagName&&t.classList.contains(e)){var r=t.querySelector(".line-numbers-rows"),s=parseInt(t.getAttribute("data-start"),10)||1,l=s+(r.children.length-1);s>n&&(n=s),n>l&&(n=l);var i=n-s;return r.children[i]}}}}}();
 </script>
 <style> @media print{ code[class*="language-"],pre[class*="language-"]{overflow: visible; word-wrap: break-word !important;} }</style></head><body><div class="markdown-body">
-<h3 id="toc_0">1. python csv</h3>
+<h3 id="toc_0">python libs</h3>
+
+<table>
+<thead>
+<tr>
+<th>lib</th>
+<th>function</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>seaborn</td>
+<td>heatmap plot_correllogram</td>
+</tr>
+<tr>
+<td>spacy</td>
+<td>best nlp framework</td>
+</tr>
+<tr>
+<td>pronouncing</td>
+<td>meter rhyme annotation</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="toc_1">1. python csv</h3>
 
 <pre><code class="language-text">songs = []
 for index, row in lyrics_dataframe.iterrows():
@@ -434,7 +460,62 @@ with open(&#39;songrhyme.csv&#39;, &#39;w&#39;) as f:
     for song in songs:
         print(&#39;song: &#39;, song)
         writer.writerow(song)
- ```
+</code></pre>
+
+<h3 id="toc_2">2. td_idf cosine_similarity()</h3>
+
+<pre><code class="language-text"> def tf_idf():
+    from sklearn.metrics.pairwise import cosine_similarity
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    
+    doc1 = str(&quot;hello am fina me&quot;)
+    doc2 = str(&quot;hello world I am saddy helloc cc  Not fina ne&quot;)
+    train_set = [doc1, doc2]
+    
+    tfidf_vectorizer = TfidfVectorizer()
+    tfidf_matrix_train = tfidf_vectorizer.fit_transform(train_set)
+    similar = cosine_similarity(tfidf_matrix_train[:1], tfidf_matrix_train)
+    print(&quot;Similarity Score [*] &quot;, similar[0][1])
+</code></pre>
+
+<h3 id="toc_3">3. plot correlgram</h3>
+
+<pre><code class="language-text">import seaborn as sns
+
+results = [
+    {&#39;max_similar&#39;: 0.6391, &#39;average_similar&#39;: 0.26670889158716443, &#39;artist&#39;: &#39;U2&#39;}
+]
+
+label_artists = [] # X
+num_list1 = []  # Y1
+import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({
+    &quot;artist&quot;: label_artists,
+    &quot;average_similar&quot;: num_list1,
+    &quot;max_similar&quot;: num_list2
+})
+plot_data = [[1.0, 0.273, 0.3604, 0.1667, 0.305, 0.2828, 0.1558],
+             [0.1558, 0.0943, 0.3125, 0.0657, 0.0426, 0.256, 1.0]
+]
+df2 = pd.DataFrame(plot_data)
+
+f, ax = plt.subplots(figsize=(8, 7))
+cmap = sns.cubehelix_palette(start=1, rot=3, gamma=0.8, as_cmap=True)
+sns.heatmap(df2, xticklabels=df[&quot;artist&quot;], yticklabels=df[&quot;artist&quot;],
+            cmap=&#39;YlGnBu&#39;, linewidths=0.05, ax=ax, square=True,)
+f.savefig(&#39;correlgram.png&#39;)
+</code></pre>
+
+<h3 id="toc_4">4. dataframe pandas</h3>
+
+<pre><code class="language-text">def generate_nlp(csv_file_path=&#39;x.csv&#39;):
+    datas = pd.read_csv(csv_file_path, encoding=&#39;utf-8&#39;)
+
+    songs = []
+    for index, row in datas.iterrows():
+        print(&#39;index: &#39;, index, row.cc)
 </code></pre>
 
 </div></body>
