@@ -1,4 +1,4 @@
-### 1. 深度强化学习笔记(Deep Reinforcement Learning)
+### 1. Deep Reinforcement Learning
 - [0. RL 资料整理](rl/00_RL_course.html)
 - [1. RL 强化学习入门](rl/ALL_IntroRL.html)
 - [2. DQN all in one](rl/ALL_DQN.html)
@@ -11,25 +11,21 @@
 - [3. UCB_11 Model-Based RL](rl/06_UCB_11.html)
 - [4. UCB_16  Inverse Reinforcement Learning](rl/07_UCB_16.html)
 
-### 2. tools
+### 2. Tools
 - [linux shell](linux/01_linux_cmd.html)
 - [python tools](linux/02_python_tools.html)
 - [tools](linux/03_tools.html)
 
-### 3. reserch
+### 3. Reserch
 - [music 合成方法总结](paper/music_papers.html)
 - [lyrics generation 歌词生成方法总结](paper/03 lyrics_generation.html)
 
-### 4. 多伦多大学自动驾驶课程
-- [1. 课程说明](paper/driver_00.html)
-- [2. 第一部分：自动驾驶基础知识](paper/driver_01_introduce.html)
-
-### 5. Deep Learning
+### 4. Deep Learning
 - [1. TCN seq-to-seq model](ml/04_TCN.html)
 - [2. tensorflow introduce](ml/02_tensorflow.html)
 - [3. NLP 课程笔记](ml/06_NLP_Notebook.html)
 
-### 6. Machine Learning
+### 5. Machine Learning
 - [1. KL cross_entry](ml/03_KL_cross_entroy.html)
 - [2. UnsupervisedLearning K-mean](ml/unsupervised_learning.html)
 - [3. Regression_PCA_PCR](ml/MLRegressionPCAPCR.html)
