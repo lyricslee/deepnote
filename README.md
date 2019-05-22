@@ -39,7 +39,8 @@
 - [2. Policy iteration And Value iteration](rl/09_PI_VI.html)
 
 ### A: Useful Repository
-repository | readme
+
+repository | details
 ---|---
 [cs188](https://github.com/lyricslee/CS188) | answers about homework in CS188 course 
 [torndado_demo](https://github.com/lyricslee/torndado_demo) |  simple http server based on the Tornado Web Framework 
