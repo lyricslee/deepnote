@@ -65,3 +65,4 @@ PG | A3C | A3C （基于 actor-critic）算法是并行算法，可以有效的�
 DDPG | DDPG | 连续空间 Actor-Critic + DQN 的结合
 DDPG | TD3 | 改善 DDPG Q 值 overestimate 导致 policy 在错误的 Q 值 errors 上 exploit 的问题
 DDPG | SAC |  entropy regularization(exploration-exploitation trade-off)
+
