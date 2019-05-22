@@ -38,7 +38,15 @@
 - [1. BFS_DFS_Heuristics](rl/08_BFS_DFS_Search.html)
 - [2. Policy iteration And Value iteration](rl/09_PI_VI.html)
 
-### A: 强化学习算法列表
+### A: Useful Repository
+repository | readme
+---|---
+[cs188](https://github.com/lyricslee/CS188) | answers about homework in CS188 course 
+[torndado_demo](https://github.com/lyricslee/torndado_demo) |  simple http server based on the Tornado Web Framework 
+[begin_lua](https://github.com/lyricslee/begin_lua)  | a beginners guide to lua programming in chinese
+[55000lyrics_rhyme_annotation](https://github.com/lyricslee/55000lyrics_meter_annotation) | Add rhyme and meter annotation into dataset [55000+ Song Lyrics kaggle](https://www.kaggle.com/mousehead/songlyrics), using the python [pronouncing](https://pronouncing.readthedocs.io/en/latest/).
+
+### B: 强化学习算法列表
 
 分类 | 名称 | 说明
 ---|---|---
