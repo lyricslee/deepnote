@@ -43,6 +43,7 @@
 - [2. Policy iteration And Value iteration](rl/09_PI_VI.html)
 
 ### A: 强化学习算法列表
+
 分类 | 名称 | 说明
 ---|---|---
 DQN | DQN | 记忆池+固定目标网络
